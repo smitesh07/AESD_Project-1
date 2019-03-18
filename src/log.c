@@ -6,11 +6,6 @@
  *  Reference: Dan Walkes, ECEN 5813-IoT Embedded Firmware (CU Boulder)
  */
 
-#include "log.h"
-#include <stdbool.h>
-#include "time.h"
-
-#if INCLUDE_LOGGING
 /**
  * @return a timestamp value for the logger, typically based on a free running
  * timer.
@@ -33,14 +28,12 @@ void logInit(void) {
   LOG_INFO(file_ptr,"Initialized Logging");
 }
 
+
 /**
  * Initialize logging
  * 
  */
 void logFlush(void) { 
-  char *file_name = "test_log.txt";
-  FILE *file_ptr = fopen((char *)file_name,"a");
   fflush(file_ptr);
   fclose(file_ptr);
 }
-#endif
