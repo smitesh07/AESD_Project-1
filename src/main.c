@@ -97,4 +97,7 @@ void main()
     pthread_join(externSocket, NULL);
     */
 
+    char *logFile = "log.txt"; 
+    logInit(logFile);
+    logFlush();
 }

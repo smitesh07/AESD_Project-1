@@ -34,4 +34,4 @@ $(TARGET): $(OBJS)
 	$(CC) $(CPPFLAGS) $(OBJS) -o $@ -lpthread -lrt
 
 clean:
-	rm -f $(OBJS) $(TARGET) log.txt
+	rm -f $(OBJS) $(TARGET)
