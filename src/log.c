@@ -39,14 +39,14 @@ void logInit(char *logFile) {
     LOG_QUEUE queue;
     queue.level = ERROR;
     queue.msg = "ERROR test";
-    deQueueForLog(&queue);
+    deQueueFromLog(&queue);
     queue.level = INFO;
     queue.msg = "ERROR test";
     queue.value = 11;
-    deQueueForLog(&queue);
+    deQueueFromLog(&queue);
     queue.level = WARN;
     queue.msg = "ERROR test";
-    deQueueForLog(&queue);
+    deQueueFromLog(&queue);
 
 }
 
@@ -55,8 +55,8 @@ void logInit(char *logFile) {
  * Flush log file
  */
 void logFlush(void) { 
-  fflush(file_ptr);
-  fclose(file_ptr);
+  fflush(filePtr);
+  fclose(filePtr);
 }
 
 
@@ -72,6 +72,7 @@ void loggerHandler() {
     initTimer(threadID, 2000000000, loggerHeartbeatTimerHandler);
     while (1) {
       sleep(1);
+    }
 }
 
 void enQueueForLog(LOG_QUEUE *logQueue) {

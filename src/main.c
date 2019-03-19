@@ -69,12 +69,6 @@ static void initHeartbeatTimer(void) {
  */
 void main()
 {
-    char *file_name = "test";
-    FILE *file_ptr = fopen((char *)file_name,"w");
-    LOG_INFO(file_ptr, "HELLO");
-    fclose(file_ptr);
-
-
     pthread_t logger, tempSensor, lumSensor, externSocket;
 
     uint32_t threadID= (pid_t)syscall(SYS_gettid);

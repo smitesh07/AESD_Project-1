@@ -16,7 +16,9 @@ ifeq ($(PLATFORM),BBG)
 endif
 
 SRCS = main.c \
-       log.c
+       log.c  \
+	   timer.c \
+	   tempSensor.c
 
 TARGET = test
 
