@@ -6,6 +6,8 @@
  *  Reference: Dan Walkes, ECEN 5813-IoT Embedded Firmware (CU Boulder)
  */
 
+#include "log.h"
+
 /**
  * @return a timestamp value for the logger, typically based on a free running
  * timer.
@@ -36,4 +38,20 @@ void logInit(void) {
 void logFlush(void) { 
   fflush(file_ptr);
   fclose(file_ptr);
+}
+
+
+void loggerHeartbeatTimerHandler () {
+  //Send a heartbeat message onto the message queue
+  printf("\nLogging thread heartbeat timeout");
+  return;
+}
+
+
+void loggerHandler() {
+    uint32_t threadID= (pid_t)syscall(SYS_gettid);
+    initTimer(threadID, 2000000000, loggerHeartbeatTimerHandler);
+    while (1) {
+      sleep(1);
+    }
 }

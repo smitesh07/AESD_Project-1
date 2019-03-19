@@ -10,8 +10,30 @@
 #define SRC_LOG_H_
 #include <inttypes.h>
 #include "stdio.h"
+#include <sys/time.h>
+#include <sys/syscall.h>
+#include <time.h>
+#include <signal.h>
+#include <stdint.h>
+#include "timer.h"
 
 char *file_name = "test_log.txt";
+
+//Prototypes
+
+
+/**
+ * @brief Handler function / Entry point for the logging thread
+ * 
+ */
+void loggerHandler(void);
+
+
+/**
+ * @brief Timer ISR to send a heartbeat message from the logging thread onto the message queue
+ * 
+ */
+void loggerHeartbeatTimerHandler (void);
 
 /**
  * Instructions for using this module:
