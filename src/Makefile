@@ -15,11 +15,6 @@ ifeq ($(PLATFORM),BBG)
 	CC = arm-linux-gcc
 endif
 
-SRCS = main.c \
-       log.c  \
-	   timer.c \
-	   tempSensor.c
-
 TARGET = test
 
 OBJS = $(SRCS:.c=.o)
