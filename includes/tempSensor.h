@@ -3,6 +3,8 @@
 #include <time.h>
 #include <signal.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "timer.h"
 
 //Prototypes
@@ -11,14 +13,14 @@
  * @brief Handler function / Entry point for the Temperature Sensing thread
  * 
  */
-void tempSensorHandler (void);
+void *tempSensorHandler (void *arg);
 
 
 /**
  * @brief Timer ISR to send a heartbeat message from the Temperature Sensing thread onto the message queue
  * 
  */
-void tempHeartbeatTimerHandler (void);
+// void tempHeartbeatTimerHandler (void);
 
 
 /**

@@ -53,18 +53,23 @@ void logFlush(void) {
   fclose(filePtr);
 }
 
-
+/*
 void loggerHeartbeatTimerHandler () {
   //Send a heartbeat message onto the message queue
   printf("\nLogging thread heartbeat timeout");
+  fflush(stdout);
   return;
 }
+*/
 
 
-void loggerHandler() {
-    uint32_t threadID= (pid_t)syscall(SYS_gettid);
-    initTimer(threadID, 2000000000, loggerHeartbeatTimerHandler);
+void *loggerHandler(void *arg) {
+    printf("\nLogger thread spawned");
+    fflush(stdout);
+    // uint32_t threadID= (pid_t)syscall(SYS_gettid);
+    // initTimer(threadID, 2000000000, loggerHeartbeatTimerHandler);
     while (1) {
+      //Call the function HERE to send the heartbeat signal to the message queue
       sleep(1);
     }
 }

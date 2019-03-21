@@ -10,6 +10,7 @@
  */
 
 #include <stdio.h>
+#include <unistd.h>
 #include <inttypes.h>
 #include <pthread.h>
 #include <signal.h>
@@ -19,6 +20,7 @@
 #include "timer.h"
 #include "tempSensor.h"
 #include "queue.h"
+#include "lumSensor.h"
 
 int msgid;
 
@@ -30,40 +32,9 @@ int msgid;
 void heartbeatTimerHandler () {
     //Check the message queue for heartbeat messages from individual threads
     printf("\nMain thread heartbeat timeout");
+    fflush(stdout);
     return;
 }
-
-
-/**
- * @brief Initialize the timer responsible for checking heartbeat messages from all other threads
- * 
- */
-/*
-static void initHeartbeatTimer(void) {
-    timer_t timerid;
-	struct itimerspec its;
-	struct sigevent sev;
-	struct sigaction tsa;
-
-	tsa.sa_flags = 0;
-	sigemptyset (&tsa.sa_mask);
-	tsa.sa_handler=&heartbeatTimerHandler;
-	sigaction(SIGRTMIN, &tsa, NULL);
-
-	sev.sigev_notify = SIGEV_SIGNAL;
-	sev.sigev_signo = SIGRTMIN;
-	sev.sigev_value.sival_ptr = &timerid;
-
-	timer_create(CLOCK_REALTIME, &sev, &timerid);
-	
-	its.it_value.tv_sec=0;
-	its.it_value.tv_nsec=100000000;
-	its.it_interval.tv_sec =0;
-	its.it_interval.tv_nsec = 100000000;
-
-	timer_settime(timerid, 0, &its, NULL);
-}
-*/
 
 
 /**
@@ -74,23 +45,26 @@ void main()
 {
     pthread_t logger, tempSensor, lumSensor, externSocket;
 
-    uint32_t threadID= (pid_t)syscall(SYS_gettid);
-    initTimer(threadID, 2000000000, heartbeatTimerHandler);
+    printf("\nMain spawned");
+    fflush(stdout);
 
-    pthread_create (&logger, NULL, &loggerHandler, NULL);
-    pthread_create (&tempSensor, NULL, &tempSensorHandler, NULL);
+    pthread_create (&logger, NULL, loggerHandler, NULL);
+    pthread_create (&tempSensor, NULL, tempSensorHandler, NULL);
+    pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);  
+
     /*
-    pthread_create (&lumSensor, NULL, &lumSensorHandler, NULL);  
-    pthread_create (&externSocket, NULL, &externSocketHandler, NULL);
+    pthread_create (&externSocket, NULL, externSocketHandler, NULL);
     */
 
-
+    uint32_t threadID= (pid_t)syscall(SYS_gettid);
+    initTimer(threadID, 2*1000000000, heartbeatTimerHandler);
 
 
     pthread_join(logger, NULL);
 	pthread_join(tempSensor, NULL);
-    /*
     pthread_join(lumSensor, NULL);
+
+    /*
     pthread_join(externSocket, NULL);
     */
 

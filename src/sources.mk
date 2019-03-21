@@ -3,7 +3,8 @@ SRCS = main.c \
        log.c  \
 	   timer.c \
 	   tempSensor.c\
-       queue.c
+       queue.c \
+	   lumSensor.c
 
 #Defining paths for the header files
 INCLUDE_H = ../includes

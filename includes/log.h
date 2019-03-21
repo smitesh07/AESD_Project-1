@@ -11,12 +11,13 @@
 #ifndef SRC_LOG_H_
 #define SRC_LOG_H_
 #include <inttypes.h>
-#include "stdio.h"
+#include <stdio.h>
 #include <sys/time.h>
 #include <sys/syscall.h>
 #include <time.h>
 #include <signal.h>
 #include <stdint.h>
+#include <unistd.h>
 #include "timer.h"
 
 extern FILE *filePtr;
@@ -80,14 +81,14 @@ typedef struct {
  * @brief Handler function / Entry point for the logging thread
  * 
  */
-void loggerHandler(void);
+void *loggerHandler(void *arg);
 
 
 /**
  * @brief Timer ISR to send a heartbeat message from the logging thread onto the message queue
  * 
  */
-void loggerHeartbeatTimerHandler (void);
+// void loggerHeartbeatTimerHandler (void);
 
 /**
  * @brief Initialize logging
