@@ -18,6 +18,9 @@
 #include "log.h"
 #include "timer.h"
 #include "tempSensor.h"
+#include "queue.h"
+
+int msgid;
 
 
 /**
@@ -92,6 +95,10 @@ void main()
     */
 
     char *logFile = "log.txt"; 
+    const char *path = "Text";
     logInit(logFile);
+    initQueue(msgid,path);
+    enQueueForLog(msgid,1, "Lets do this", 2);
+    deQueueFromLog(msgid);
     logFlush();
 }

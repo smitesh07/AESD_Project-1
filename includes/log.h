@@ -1,11 +1,13 @@
-/*
- * log.c
- *
- *  Created on: March 17, 2019
- *  Author: Smitesh Modak and Ashish Tak
- *  Reference: Dan Walkes, ECEN 5813-IoT Embedded Firmware (CU Boulder)
+/**
+ * @file log.h
+ * @author Smitesh Modak and Ashish Tak
+ * @brief log header file containing enums, structures and function prototypes
+ * @version 0.1
+ * @date 2019-03-20
+ * 
+ * @copyright Copyright (c) 2019
+ * 
  */
-
 #ifndef SRC_LOG_H_
 #define SRC_LOG_H_
 #include <inttypes.h>
@@ -33,15 +35,15 @@ typedef enum {
   DEBUG
 } LOG_LEVEL;
 
-/*
+/**
 *  log structure for queue
 */
 typedef struct {
   LOG_LEVEL level;
-  char *msg;
-  uint32_t value;
+  char msg[50];
+  int value;
   // pid_t pid;
-} LOG_QUEUE;
+} LOG_t;
 
 #ifndef LOG_ERROR
 #define LOG_ERROR(message, ...) LOG_DO(filePtr, message, ERROR, ##__VA_ARGS__)
@@ -87,15 +89,24 @@ void loggerHandler(void);
  */
 void loggerHeartbeatTimerHandler (void);
 
-void logInit();
-uint32_t loggerGetTimestamp();
-void logFlush();
-void deQueueFromLog(LOG_QUEUE *logQueue);
-//#else
 /**
- * Remove all logging related code on builds where logging is not enabled
+ * @brief Initialize logging
+ * 
  */
-//#define LOG_DO(log_file_ptr, message, level, ...)
-//#endif
+void logInit();
+
+/**
+ * @brief This will be printed at the beginning of each log message.
+ * 
+ * @return uint32_t 
+ *         return a timestamp value for the logger
+ */
+uint32_t loggerGetTimestamp();
+
+/**
+ * @brief flush to log file
+ * 
+ */
+void logFlush();
 
 #endif /* SRC_LOG_H_ */
