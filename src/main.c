@@ -45,6 +45,14 @@ void main()
 {
     pthread_t logger, tempSensor, lumSensor, externSocket;
 
+    char *logFile = "log.txt"; 
+    const char *path = "Text";
+    logInit(logFile);
+    initQueue(msgid,path);
+    enQueueForLog(msgid,1, "Lets do this", 2);
+    deQueueFromLog(msgid);
+    logFlush();
+
     printf("\nMain spawned");
     fflush(stdout);
 
@@ -68,11 +76,5 @@ void main()
     pthread_join(externSocket, NULL);
     */
 
-    char *logFile = "log.txt"; 
-    const char *path = "Text";
-    logInit(logFile);
-    initQueue(msgid,path);
-    enQueueForLog(msgid,1, "Lets do this", 2);
-    deQueueFromLog(msgid);
-    logFlush();
+
 }
