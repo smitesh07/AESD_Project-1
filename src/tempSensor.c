@@ -1,4 +1,6 @@
 #include "tempSensor.h"
+#include "queue.h"
+#include "log.h"
 
 /*
 void tempHeartbeatTimerHandler () {
@@ -14,7 +16,8 @@ void tempSensorTrigger () {
     //Read temperature from the sensor
     usleep(50); //Mocking the amount of time required for the read
     static uint32_t temp=0;
-    printf("\nTemp: %d degrees", temp++);
+    // printf("\nTemp: %d degrees", temp++);
+    enQueueForLog(INFO, "Temp Value: ", temp++);
     fflush(stdout);
     return;
 }

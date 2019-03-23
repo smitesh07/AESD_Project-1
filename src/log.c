@@ -69,6 +69,7 @@ void *loggerHandler(void *arg) {
     // uint32_t threadID= (pid_t)syscall(SYS_gettid);
     // initTimer(threadID, 2000000000, loggerHeartbeatTimerHandler);
     while (1) {
+      deQueueFromLog();
       //Call the function HERE to send the heartbeat signal to the message queue
       sleep(1);
     }

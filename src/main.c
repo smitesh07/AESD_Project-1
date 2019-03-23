@@ -16,14 +16,12 @@
 #include <signal.h>
 #include <sys/time.h>
 #include <time.h>
+#include <mqueue.h>
 #include "log.h"
 #include "timer.h"
 #include "tempSensor.h"
 #include "queue.h"
 #include "lumSensor.h"
-
-int msgid;
-
 
 /**
  * @brief Timer callback function to check the heartbeat messages from the Message Queue
@@ -31,7 +29,7 @@ int msgid;
  */
 void heartbeatTimerHandler () {
     //Check the message queue for heartbeat messages from individual threads
-    printf("\nMain thread heartbeat timeout");
+    printf("\nMain thread heartbeat timeout\n");
     fflush(stdout);
     return;
 }
@@ -46,12 +44,21 @@ void main()
     pthread_t logger, tempSensor, lumSensor, externSocket;
 
     char *logFile = "log.txt"; 
-    const char *path = "Text";
+    char path[] = "/OpenTest_MQ";
     logInit(logFile);
-    initQueue(msgid,path);
-    enQueueForLog(msgid,1, "Lets do this", 2);
-    deQueueFromLog(msgid);
-    logFlush();
+    initQueue(path);
+    // enQueueForLog(4, "Priority 4", 2);
+    // enQueueForLog(5, "Priority 5", 2);
+    // enQueueForLog(6, "Priority 6", 2);
+    // enQueueForLog(2, "Priority 3", 2);
+    // enQueueForLog(3, "Priority 3", 2);
+    // enQueueForLog(1, "Priority 1", 2);
+    // deQueueFromLog();
+    // deQueueFromLog();
+    // deQueueFromLog();
+    // deQueueFromLog();
+    // deQueueFromLog();
+    // deQueueFromLog();
 
     printf("\nMain spawned");
     fflush(stdout);
@@ -75,6 +82,6 @@ void main()
     /*
     pthread_join(externSocket, NULL);
     */
-
-
+    logFlush();
+    mq_unlink (path);
 }

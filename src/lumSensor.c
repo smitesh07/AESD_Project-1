@@ -1,10 +1,13 @@
 #include "lumSensor.h"
+#include "queue.h"
+#include "log.h"
 
 void lumSensorTrigger () {
     //Read luminosity from the sensor
     usleep(50); //Mocking the amount of time required for the read
     static uint32_t lum=0;
-    printf("\nLum: %d percent", lum);
+    // printf("\nLum: %d percent", lum);
+    enQueueForLog(INFO, "Lum Value: ", lum++);
     fflush(stdout);
     lum+=2;
     return;

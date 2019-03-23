@@ -26,26 +26,23 @@ typedef struct {
 /**
  * @brief 
  * 
- * @param msqid       message queue id
  * @param queueName   message queue name
  */
-void initQueue(int msqid, const char *queueName);
+void initQueue(char *queueName);
 
 /**
  * @brief enqueue to the logger queue
  * 
- * @param msqid   message queue id
  * @param level   level/priority of message
  * @param msg     message
  * @param value   value from the sensors
  */
-void enQueueForLog(int msqid, LOG_LEVEL level, char *msg, int value);
+void enQueueForLog(LOG_LEVEL level, char *msg, int value);
 
 /**
  * @brief dequeue from the logger queue and LOG it
  * 
- * @param msqid   message queue id
  */
-void deQueueFromLog(int msqid);
+void deQueueFromLog(void);
 
 #endif
