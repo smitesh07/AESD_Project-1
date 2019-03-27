@@ -1,5 +1,5 @@
 /**
- * @file tempSensor.c
+ * @file tmp102.c
  * @author Smitesh Modak and Ashish Tak
  * @brief  source file for Temperature Sensor TMP102
  * @version 0.1
@@ -27,9 +27,9 @@ uint8_t tlowReg = 0x02;             // Temperature Low register from datasheet
 uint8_t thighReg= 0x03;             // Temperature High register from datasheet
 uint8_t tempSensorAddr = 0x48;      // TMP102 address from datasheet
 
-uint16_t readTempReg() {
+uint16_t readTempReg(void) {
     uint8_t buf[2] = {0};
-    uint16_t data;
+    int16_t data;
 
     // Using I2C Read
     if (i2cRead(buf,2) != 0) {
@@ -40,7 +40,7 @@ uint16_t readTempReg() {
         // Bit 0 of second byte will always be 0 in 12-bit readings and 1 in 13-bit
         if(buf[1]&0x01)	// 13 bit mode
         {
-            printf("Entered 13 bit mode");
+            // printf("Entered 13 bit mode");
             // Combine bytes to create a signed int
             data = ((buf[0]) << 5) | (buf[1] >> 3);
             // Temperature data can be + or -, if it should be negative,
@@ -66,7 +66,7 @@ uint16_t readTempReg() {
     return data;
 }
 
-float readTlow() {
+float readTlow(void) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(&tlowReg, 1) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
@@ -78,7 +78,7 @@ float readTlow() {
     return tLowData * 0.0625;        
 }
 
-float readThigh() {
+float readThigh(void) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(&thighReg, 1) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
@@ -90,7 +90,7 @@ float readThigh() {
     return tHighData * 0.0625;
 }
 
-float readTemp() {
+float readTemp(void) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(&tempReg, 1) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
@@ -102,7 +102,7 @@ float readTemp() {
     return tempData * 0.0625; 
 }
 
-uint16_t readConfigReg() {
+uint16_t readConfigReg(void) {
     uint8_t buf[2] = {0};
     uint16_t data;
     
@@ -125,7 +125,7 @@ uint16_t readConfigReg() {
     return data;
 }
 
-int writeConfig(){
+int writeConfig(void) {
     uint8_t buf[3];
     
     volatile uint16_t configData = readConfigReg();
@@ -135,15 +135,47 @@ int writeConfig(){
 
     // Configure the sensor to go in and out of shutdown mode
     if (SHUTDOWN == 1)
-        configByte0 |= (1 << 1);
+        configByte0 |= (1 << 1);        // shutdown mode on
+    else
+        configByte0 &= ~(1 << 1);       // default shutdown mode
     
     // Set the EM operation
-    if (EM == 1) {
-        configByte1 &= ~(1 << 4);
-        configByte1 |= (1 << 4);
-    }
+    if (EM == 1) 
+        configByte1 |= (1 << 4);        // exteneded mode on
+    else
+        configByte1 &= ~(1 << 4);       // default EM operation
+
     // Set Conversion Rate
     configByte1 |= (RATE << 6);
+
+    // Set polarity
+    if(POL == 1) 
+        configByte0 |= (1<<2);          
+    else
+        configByte0 &= ~(1<<2);         // default polarity 
+
+    //Set Alert Mode
+    if(ALERT_MODE == 1)
+        configByte0 |= (1<<1);          // set to interrupt mode
+    else
+        configByte0 &= ~(1<<1);         // default alert mode
+
+    if(FAULTS == FAULTS_ONE) {
+        configByte0 &= ~(1<<4);
+        configByte0 &= ~(1<<3);
+    }        
+    else if (FAULTS == FAULTS_TWO) {
+        configByte0 &= ~(1<<4);
+        configByte0 |= (1<<3);
+    }
+    else if (FAULTS == FAULTS_FOUR) {
+        configByte0 |= (1<<4);
+        configByte0 &= ~(1<<3);
+    }
+    else if (FAULTS == FAULTS_SIX) {
+        configByte0 |= (1<<4);
+        configByte0 |= (1<<3); 
+    }
 
     buf[0] = configReg;
     buf[1] = configByte0;
@@ -152,16 +184,17 @@ int writeConfig(){
     printf("Write config byte0 %x \n", buf[1]);
     printf("Write config byte1 %x \n", buf[2]);
 
-     // Using I2C Write to specify which register to read
+    // Using I2C Write to specify which register to read
     if (i2cWrite(buf, 3) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
         printf("Failed to write to the i2c bus");
         return -1;
     }
 
+    return 0;
 }
 
-void readConfig(){
+void readConfig(void) {
     uint16_t configReg = readConfigReg();
     printf("Read config %x \n",configReg);
 
@@ -190,4 +223,45 @@ void readConfig(){
         convRate = CONV_FOUR;
     else if(convRate == CONV_EIGHT)
         convRate = CONV_EIGHT;
+}
+
+int setTempReg(float tempData, uint8_t cmd) {
+    uint8_t buf[3];
+    buf[0] = cmd;
+    volatile uint16_t configData = readConfigReg();
+
+    uint8_t configByte0 = (configData & 0xFF00) >> 8;
+    uint8_t configByte1 = (configData & 0x00FF);
+
+    tempData = tempData/0.0625;
+
+     // Split temperature into separate bytes
+    if(((configByte1 >> 4) & 0x1) == 1) {	// 13-bit mode
+        buf[1] = ((int16_t)(tempData))>>5;
+        buf[2] = ((int16_t)(tempData))<<3;
+    }
+    else	// 12-bit mode
+    {
+        buf[1] = ((int16_t)(tempData))>>4;
+        buf[2] = ((int16_t)(tempData))<<4;
+    }
+
+    // Using I2C Write to specify which register to read
+    if (i2cWrite(buf, 3) != 0) {
+        /* ERROR HANDLING: i2c transaction failed */
+        printf("Failed to write to the i2c bus");
+        return -1;
+    }
+    
+    return 0;
+}
+
+void setLowTemp(void) {
+    if(setTempReg(LOW_TEMP, tlowReg)!=0)
+        printf("Error setting low temp");
+}
+
+void setHighTemp(void) {
+    if(setTempReg(HIGH_TEMP, thighReg)!=0)
+        printf("Error setting high temp");
 }
