@@ -1,7 +1,7 @@
 /**
- * @file tmpp102.h
+ * @file tmp102.h
  * @author Smitesh Modak and Ashish Tak
- * @brief i2c header file containing function prototypes, enums and macros
+ * @brief header file containing function prototypes, enums and macros
  * @version 0.1
  * @date 2019-03-26
  * 
