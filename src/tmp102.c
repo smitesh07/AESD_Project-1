@@ -193,9 +193,15 @@ int writeConfig(void) {
     return 0;
 }
 
-void readConfig(void) {
+int readConfig(void) {
     uint16_t configReg = readConfigReg();
-    printf("Read config %x \n",configReg);
+    if (configReg == -1) {
+        printf("Failed to read the i2c bus");
+        return -1;
+    }
+    else {
+        printf("Read config %x \n",configReg);
+    }
 
     // Read the Fault bits
     uint8_t faults = (configReg >> 11) & (0x03);
@@ -222,6 +228,8 @@ void readConfig(void) {
         convRate = CONV_FOUR;
     else if(convRate == CONV_EIGHT)
         convRate = CONV_EIGHT;
+
+    return 0;
 }
 
 int setTempReg(float tempData, uint8_t cmd) {
@@ -255,12 +263,20 @@ int setTempReg(float tempData, uint8_t cmd) {
     return 0;
 }
 
-void setLowTemp(void) {
-    if(setTempReg(LOW_TEMP, tlowReg)!=0)
+int setLowTemp(void) {
+    if(setTempReg(LOW_TEMP, tlowReg)!=0) {
         printf("Error setting low temp");
+        return -1;
+    }
+
+    return 0;
 }
 
-void setHighTemp(void) {
-    if(setTempReg(HIGH_TEMP, thighReg)!=0)
+int setHighTemp(void) {
+    if(setTempReg(HIGH_TEMP, thighReg)!=0) {
         printf("Error setting high temp");
+        return -1;
+    }
+
+    return 0;
 }

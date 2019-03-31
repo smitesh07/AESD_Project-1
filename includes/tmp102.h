@@ -92,7 +92,7 @@ int writeConfig(void);
  * @brief read config register by calling read config reg and print out necessary data
  * 
  */
-void readConfig(void);
+int readConfig(void);
 
 /**
  * @brief Set the Temp Register
@@ -108,14 +108,14 @@ int setTempReg(float tempData, uint8_t cmd);
  *        temperature value and register address
  * 
  */
-void setLowTemp(void);
+int setLowTemp(void);
 
 /**
  * @brief Set high limit register by providing setTempReg function with
  *        temperature value and register address
  * 
  */
-void setHighTemp(void);
+int setHighTemp(void);
 
 
 #endif /* SRC_TMP102_H_ */
