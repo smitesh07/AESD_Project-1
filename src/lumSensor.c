@@ -14,7 +14,6 @@ int slaveAddr = LUM_SLAVE_ADDRESS;
 
 
 void lumSensorTrigger () {
-    //Read luminosity from the sensor
     sem_wait(sem_i2c);
     i2cCntrl(slaveAddr);  
     lux= getLum();
@@ -50,9 +49,7 @@ void *lumSensorHandler (void *arg) {
       latestLux->sensorConnected=true;
     }
     sem_post(sem_i2c);
-    uint32_t threadID= (pid_t)syscall(SYS_gettid);
-    // initTimer(threadID, 2000000000, tempHeartbeatTimerHandler);
-    initTimer(threadID, 1*1000000000, lumSensorTrigger);
+    initTimer(1*1000000000, lumSensorTrigger);
     while (1) {
       //Call the function HERE to send the heartbeat signal to the message queue
       sleep(1);

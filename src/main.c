@@ -66,8 +66,7 @@ void main()
     pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);  
     pthread_create (&externSocket, NULL, externSocketHandler, NULL);
 
-    uint32_t threadID= (pid_t)syscall(SYS_gettid);
-    initTimer(threadID, 2*1000000000, heartbeatTimerHandler);
+    initTimer( 2*1000000000, heartbeatTimerHandler);
 
 
     pthread_join(logger, NULL);

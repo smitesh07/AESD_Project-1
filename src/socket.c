@@ -12,6 +12,7 @@ void *externSocketHandler (void *arg) {
     int sockDescriptor = 0, sockAccepted = 0, n=0;
     struct sockaddr_in serv_addr;
     luxUpdate * latestLux = (luxUpdate *)malloc(sizeof(luxUpdate));
+    tempUpdate * latestTemp = (tempUpdate *)malloc(sizeof(tempUpdate));
 
     char txBuffer[BUFFER_MAX_SIZE], rxBuffer[QUERY_MAX_SIZE];
 
@@ -48,7 +49,13 @@ void *externSocketHandler (void *arg) {
                 TODO: Depending on the command call the required APIs or return the last logging result
                 */ 
                 if (!strcmp(rxBuffer,"temp")) {
-                    sprintf(txBuffer, "Temp: %f", tempData);
+                    latestTemp= externReadTemp();
+                    if (latestTemp->sensorConnected) {
+                        sprintf(txBuffer, "Temperature: %f", latestTemp->temp);    
+                    }
+                    else {
+                        sprintf(txBuffer, "Temperature sensor disconnected");
+                    }
                 }
                 else if (!strcmp(rxBuffer,"lum")) {
                     latestLux = externReadLum();

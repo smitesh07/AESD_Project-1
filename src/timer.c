@@ -11,7 +11,7 @@
 
 #include "timer.h"
 
-int initTimer(pid_t threadID, uint64_t nanosec, void (*callbackFunction)() ) {
+int initTimer(uint64_t nanosec, void (*callbackFunction)() ) {
     timer_t timerid;
 	struct itimerspec its;
 	struct sigevent sev;

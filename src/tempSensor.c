@@ -7,15 +7,6 @@
 #include "pollInt.h"
 #include <poll.h>
 
-/*
-void tempHeartbeatTimerHandler () {
-  //Send a heartbeat message onto the message queue
-  printf("\nTemp Sensor thread heartbeat timeout");
-  fflush(stdout);
-  return;
-}
-*/
-
 poll_t pollFds;
 float tempData;
 
@@ -35,6 +26,7 @@ void tempSensorTrigger () {
       latestTemp->sensorConnected=false;
     } else {
       latestTemp->sensorConnected=true;
+      printf("Temperature Value in deg C: %f",tempData);
       enQueueForLog(INFO, "Temperature Value in deg C: ",tempData);
     }
 
@@ -56,9 +48,7 @@ void tempSensorTrigger () {
 
 
 void *tempSensorHandler (void *arg) {
-    uint32_t threadID= (pid_t)syscall(SYS_gettid);
-    // initTimer(threadID, 2000000000, tempHeartbeatTimerHandler);
-    initTimer(threadID, 1*1000000000, tempSensorTrigger);
+    initTimer(1*1000000000, tempSensorTrigger);
 
     int ret;
     latestTemp = (tempUpdate *)malloc(sizeof(latestTemp));
@@ -99,4 +89,10 @@ void *tempSensorHandler (void *arg) {
       //Call the function HERE to send the heartbeat signal to the message queue
       sleep(1);
     }
+}
+
+
+tempUpdate * externReadTemp() {
+    latestTemp->temp=tempData;
+    return latestTemp;
 }

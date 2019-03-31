@@ -83,13 +83,6 @@ typedef struct {
  */
 void *loggerHandler(void *arg);
 
-
-/**
- * @brief Timer ISR to send a heartbeat message from the logging thread onto the message queue
- * 
- */
-// void loggerHeartbeatTimerHandler (void);
-
 /**
  * @brief Initialize logging
  * 

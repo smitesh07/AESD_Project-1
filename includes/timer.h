@@ -9,8 +9,7 @@
 /**
  * @brief Timer Initialization helper function used by all the threads
  * 
- * @param threadID - The thread to which the timeout signal needs to be sent 
  * @param nanosec - Timeout interval in nanoseconds (used for both the initial timeout and repetitive interval)
  * @param *callbackFunction() - The callback function which needs to be associated with the timer
  */
-int initTimer(pid_t threadID, uint64_t nanosec, void (*callbackFunction)());
+int initTimer(uint64_t nanosec, void (*callbackFunction)());

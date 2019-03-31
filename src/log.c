@@ -53,15 +53,6 @@ void logFlush(void) {
   fclose(filePtr);
 }
 
-/*
-void loggerHeartbeatTimerHandler () {
-  //Send a heartbeat message onto the message queue
-  printf("\nLogging thread heartbeat timeout");
-  fflush(stdout);
-  return;
-}
-*/
-
 
 void *loggerHandler(void *arg) {
     printf("\nLogger thread spawned");

@@ -18,7 +18,7 @@
 
 #define TEMP_ALERT_PIN   7
 
-#define SHUTDOWN 1      // 0: Shutdown mode off
+#define SHUTDOWN 0      // 0: Shutdown mode off
                         // 1: Shutdown mode on
                         
 #define EM  1           // 0: 12 bit resolution

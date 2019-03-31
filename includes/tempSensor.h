@@ -28,16 +28,12 @@ void *tempSensorHandler (void *arg);
 
 
 /**
- * @brief Timer ISR to send a heartbeat message from the Temperature Sensing thread onto the message queue
- * 
- */
-// void tempHeartbeatTimerHandler (void);
-
-
-/**
  * @brief Timer ISR to trigger reading a temperature value from the sensor
  * 
  */
 void tempSensorTrigger (void);
+
+
+tempUpdate * externReadTemp(void);
 
 #endif /* SRC_TEMPSENSOR_H_ */
