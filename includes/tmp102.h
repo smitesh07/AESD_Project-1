@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define TEMP_ALERT_PIN   7
+
 #define SHUTDOWN 1      // 0: Shutdown mode off
                         // 1: Shutdown mode on
                         
