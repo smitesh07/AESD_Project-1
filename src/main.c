@@ -43,11 +43,21 @@ void heartbeatTimerHandler () {
  * @brief Main
  * 
  */
-void main()
+int main(int argc, char *argv[])
 {
     pthread_t logger, tempSensor, lumSensor, externSocket;
 
-    char *logFile = "log.txt"; 
+    char logFile[50];
+    char fileName[50];
+
+    if (argc > 1) {
+      strcpy(logFile, argv[1]);
+      strcpy(fileName, argv[2]);
+      strcat(logFile,fileName);
+    } else {
+        strcpy(logFile, "log.txt");
+    }
+
     char path[] = "/OpenTest_MQ";
     logInit(logFile);
     initQueue(path);
@@ -75,4 +85,6 @@ void main()
     pthread_join(externSocket, NULL);
     logFlush();
     mq_unlink (path);
+
+    return 0;
 }
