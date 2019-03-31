@@ -137,6 +137,12 @@ int writeConfig(void) {
         configByte0 |= (1 << 1);        // shutdown mode on
     else
         configByte0 &= ~(1 << 1);       // default shutdown mode
+
+    // Set the One-Shot/Conversion Ready
+    if (ONE_SHOT == 1)
+        configByte0 |= (1 << 7);
+    else
+        configByte0 &= ~(1 << 7);
     
     // Set the EM operation
     if (EM == 1) 

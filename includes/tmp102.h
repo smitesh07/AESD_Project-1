@@ -20,6 +20,9 @@
 
 #define SHUTDOWN 0      // 0: Shutdown mode off
                         // 1: Shutdown mode on
+
+#define ONE_SHOT 0      // 0: One shot/Conversion ready disabled
+                        // 1: One shot/Conversion ready enabled
                         
 #define EM  1           // 0: 12 bit resolution
                         // 1: 13 bit resolution
