@@ -44,6 +44,7 @@
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
 #define POLL_TIMEOUT (3 * 1000) /* 3 seconds */
 #define MAX_BUF 64
+#define USR_LED 53
 
 typedef enum {
 	INPUT_PIN=0,
