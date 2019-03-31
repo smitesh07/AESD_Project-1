@@ -22,6 +22,7 @@
 #include "tempSensor.h"
 #include "queue.h"
 #include "lumSensor.h"
+#include "socket.h"
 
 /**
  * @brief Timer callback function to check the heartbeat messages from the Message Queue
@@ -66,10 +67,7 @@ void main()
     pthread_create (&logger, NULL, loggerHandler, NULL);
     pthread_create (&tempSensor, NULL, tempSensorHandler, NULL);
     pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);  
-
-    /*
     pthread_create (&externSocket, NULL, externSocketHandler, NULL);
-    */
 
     uint32_t threadID= (pid_t)syscall(SYS_gettid);
     initTimer(threadID, 2*1000000000, heartbeatTimerHandler);
@@ -78,10 +76,7 @@ void main()
     pthread_join(logger, NULL);
 	pthread_join(tempSensor, NULL);
     pthread_join(lumSensor, NULL);
-
-    /*
     pthread_join(externSocket, NULL);
-    */
     logFlush();
     mq_unlink (path);
 }
