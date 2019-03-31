@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define TEMP_SENSOR_ADDR 0x48      // TMP102 address from datasheet
+
 #define TEMP_ALERT_PIN   7
 
 #define SHUTDOWN 1      // 0: Shutdown mode off
