@@ -44,12 +44,14 @@ char readBuffer[WORD_SIZE] = {0};
 char writeBuffer[WORD_SIZE+1] = {0};
 
 
-void initLumSensor() {
+int initLumSensor() {
     //Write 00 to the control register to power down the device
     //Power it up again using 0x03 and read the value back
     writeBuffer[0]= CMD_RW_BYTE | CONTROL;
     writeBuffer[1]= 0x00;
-    i2cWrite(writeBuffer, WORD_SIZE);
+    if (i2cWrite(writeBuffer, WORD_SIZE) ==-1) {
+        return -1;
+    }
     writeBuffer[1]= 0x03;
     i2cWrite(writeBuffer, WORD_SIZE);
     i2cRead(readBuffer, BYTE_SIZE);
@@ -101,6 +103,8 @@ void initLumSensor() {
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, BYTE_SIZE);
     printf("\nInterrupt Control Reg (Level Interrupts enabled): 0x%x",readBuffer[0]);
+
+    return 0;
 }
 
 
@@ -109,7 +113,9 @@ float getLum() {
 
     //Clear pending interrupt
     writeBuffer[0]= CMD_RW_BYTE | 0x40;
-    i2cWrite(writeBuffer, BYTE_SIZE); 
+    if (i2cWrite(writeBuffer, BYTE_SIZE) == -1) {
+        return -1;
+    }
 
     //Read values from the 2 channels
 

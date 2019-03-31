@@ -12,6 +12,6 @@
 #include <math.h>
 #include "i2c.h"
 
-void initLumSensor(void);
+int initLumSensor(void);
 
 float getLum(void);

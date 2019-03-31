@@ -16,24 +16,25 @@ int slaveAddr = LUM_SLAVE_ADDRESS;
 void lumSensorTrigger () {
     //Read luminosity from the sensor
     sem_wait(sem_i2c);
-    if (i2cCntrl(slaveAddr)==-1) {
+    i2cCntrl(slaveAddr);  
+    lux= getLum();
+    sem_post(sem_i2c);
+    if (lux<0) {
       latestLux->sensorConnected=false;
     }
     else {
       latestLux->sensorConnected=true;
-      lux= getLum();
+      enQueueForLog(INFO, "Luminosity: ", lux);
+      if (lux<DARKNESS_THRESHOLD && currentState==LIGHT) {
+          enQueueForLog(WARN, "Change in luminosity level. It's now dark.", DARK); 
+          currentState= DARK;
+      }
+      else if (lux>=DARKNESS_THRESHOLD && currentState==DARK) {
+          enQueueForLog(WARN, "Change in luminosity level. It's now light.", LIGHT);
+          currentState= LIGHT;
+      }
+      fflush(stdout);
     }
-    sem_post(sem_i2c);
-    if (lux<DARKNESS_THRESHOLD && currentState==LIGHT) {
-        enQueueForLog(WARN, "Change in luminosity level. It's now dark.", DARK); 
-        currentState= DARK;
-    }
-    else if (lux>=DARKNESS_THRESHOLD && currentState==DARK) {
-        enQueueForLog(WARN, "Change in luminosity level. It's now light.", LIGHT);
-        currentState= LIGHT;
-    }
-    enQueueForLog(INFO, "Luminosity: ", lux);
-    fflush(stdout);
     return;
 }
 
@@ -41,12 +42,12 @@ void lumSensorTrigger () {
 void *lumSensorHandler (void *arg) {
     latestLux = (luxUpdate *)malloc(sizeof(latestLux));
     sem_wait(sem_i2c);
-    if (i2cCntrl(slaveAddr)==-1) {
+    i2cCntrl(slaveAddr);
+    if (initLumSensor()==-1) {
       latestLux->sensorConnected=false;
     }
     else {
       latestLux->sensorConnected=true;
-      initLumSensor();
     }
     sem_post(sem_i2c);
     uint32_t threadID= (pid_t)syscall(SYS_gettid);
