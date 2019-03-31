@@ -1,3 +1,14 @@
+/**
+ * @file timer.h
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Header file for the timer helper functionality
+ * @version 0.1
+ * @date 2019-03-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #include <sys/time.h>
 #include <time.h>
 #include <signal.h>

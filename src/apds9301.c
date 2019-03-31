@@ -1,7 +1,7 @@
 /**
  * @file apds9301.c
- * @author your name (you@domain.com)
- * @brief 
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Implementation of the library/HAL of the APDS-9301 Luminosity sensor
  * @version 0.1
  * @date 2019-03-30
  * 

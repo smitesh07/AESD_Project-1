@@ -1,6 +1,6 @@
 /**
  * @file main.c
- * @author Ashish Tak, Smitesh Modak
+ * @author Smitesh Modak and Ashish Tak
  * @brief 
  * @version 0.1
  * @date 2019-03-18
@@ -25,10 +25,14 @@
 #include "socket.h"
 #include "i2c.h"
 
+//Semaphore to synchronize access the I2C bus
 #define SEM_I2C "/sem_i2c"
 
+#define HEARTBEAT_TIMEOUT 5 //in seconds
+
+
 /**
- * @brief Timer callback function to check the heartbeat messages from the Message Queue
+ * @brief Timer callback function to check the heartbeat messages from individual threads
  * 
  */
 void heartbeatTimerHandler () {
@@ -65,6 +69,7 @@ int main(int argc, char *argv[])
     printf("\nMain spawned");
     fflush(stdout);
 
+    //Create and Initialize the semaphore for I2C bus syncronization
     sem_i2c = sem_open(SEM_I2C, O_RDWR | O_CREAT, 0666, 1);
     if (sem_i2c == SEM_FAILED || sem_i2c == SEM_FAILED)
         perror("sem_open failed\n");
@@ -76,7 +81,7 @@ int main(int argc, char *argv[])
     pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);  
     pthread_create (&externSocket, NULL, externSocketHandler, NULL);
 
-    initTimer( 2*1000000000, heartbeatTimerHandler);
+    initTimer(HEARTBEAT_TIMEOUT *1000000000, heartbeatTimerHandler);
 
 
     pthread_join(logger, NULL);

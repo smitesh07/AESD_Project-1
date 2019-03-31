@@ -1,7 +1,7 @@
 /**
  * @file timer.c
- * @author Ashish Tak, Smitesh Modak
- * @brief 
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Source file providing a helper function for different tasks to initialize respective timers 
  * @version 0.1
  * @date 2019-03-18
  * 
@@ -10,6 +10,7 @@
  */
 
 #include "timer.h"
+
 
 int initTimer(uint64_t nanosec, void (*callbackFunction)() ) {
     timer_t timerid;

@@ -1,3 +1,14 @@
+/**
+ * @file socket.h
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Header file for the Remote Socket Request Handler
+ * @version 0.1
+ * @date 2019-03-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

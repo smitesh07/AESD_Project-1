@@ -1,3 +1,14 @@
+/**
+ * @file lumSensor.c
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Source file for the luminosity sensing thread operations
+ * @version 0.1
+ * @date 2019-03-31
+ *
+ * @copyright Copyright (c) 2019
+ *
+ */
+
 #include "lumSensor.h"
 #include <poll.h>
 #include "SimpleGPIO.h"
@@ -8,17 +19,18 @@
 //Threshold for the actual luminosity value to determine whether it's 'light' or 'dark'
 #define DARKNESS_THRESHOLD 5
 
-poll_t pollFds;
-lumState currentState= LIGHT;
+#define LUMINOSITY_SENSING_INTERVAL 1 //in seconds
+
+poll_t pollFds;lumState currentState= LIGHT;
 float lux;
 luxUpdate *latestLux;
 int slaveAddr = LUM_SLAVE_ADDRESS;
 
 
 void lumSensorTrigger () {
-    int ret; 
+    int ret;
     sem_wait(sem_i2c);
-    i2cCntrl(slaveAddr);  
+    i2cCntrl(slaveAddr);
     lux= getLum();
     sem_post(sem_i2c);
     if (lux<0) {
@@ -28,7 +40,7 @@ void lumSensorTrigger () {
       latestLux->sensorConnected=true;
       enQueueForLog(INFO, "Luminosity: ", lux);
       if (lux<DARKNESS_THRESHOLD && currentState==LIGHT) {
-          enQueueForLog(WARN, "Change in luminosity level. It's now dark.", DARK); 
+          enQueueForLog(WARN, "Change in luminosity level. It's now dark.", DARK);
           currentState= DARK;
       }
       else if (lux>=DARKNESS_THRESHOLD && currentState==DARK) {
@@ -78,11 +90,10 @@ void *lumSensorHandler (void *arg) {
     if (ret != 0) {
       enQueueForLog(ERROR, "Unable to set edge for Luminosity Alert pin", 0);
     }
-    
+
     // Initialize polling for interrupt
     pollInit(7, &pollFds);
 
-    initTimer(1*1000000000, lumSensorTrigger);
     while (1) {
       //Call the function HERE to send the heartbeat signal to the message queue
       sleep(1);

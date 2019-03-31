@@ -1,3 +1,14 @@
+/**
+ * @file lumSensor.h
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Header file for the luminosity sensing thread operations
+ * @version 0.1
+ * @date 2019-03-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #ifndef LUMSENSOR_H_
 #define LUMSENSOR_H_
 
@@ -28,6 +39,7 @@ typedef struct {
     lumState brightnessState;  
 }luxUpdate;
 
+
 //Prototypes
 
 /**
@@ -42,6 +54,11 @@ void *lumSensorHandler (void *arg);
  */
 void lumSensorTrigger (void);
 
+/**
+ * @brief API for external tasks to request present Luminosity value
+ * 
+ * @return luxUpdate* : Pointer to the structure containing the Luminosity data
+ */
 luxUpdate * externReadLum(void);
 
 #endif

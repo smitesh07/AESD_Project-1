@@ -1,7 +1,7 @@
 /**
  * @file tmp102.c
  * @author Smitesh Modak and Ashish Tak
- * @brief  source file for Temperature Sensor TMP102
+ * @brief : Source/library file for Temperature Sensor TMP102
  * @version 0.1
  * @date 2019-03-26
  * 

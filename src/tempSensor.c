@@ -1,3 +1,14 @@
+/**
+ * @file tempSensor.c
+ * @author Ashish Tak
+ * @brief : Source file for the temperature sensing thread operations
+ * @version 0.1
+ * @date 2019-03-31
+ *
+ * @copyright Copyright (c) 2019
+ *
+ */
+
 #include "tempSensor.h"
 #include "queue.h"
 #include "log.h"
@@ -6,6 +17,8 @@
 #include "SimpleGPIO.h"
 #include "pollInt.h"
 #include <poll.h>
+
+#define TEMPERATURE_SENSING_INTERVAL 1 //in seconds
 
 poll_t pollFds;
 float tempData;
@@ -16,16 +29,16 @@ void tempSensorTrigger () {
     int n;
     int ret;
 
-    // Take mutex
+    //Acquire the semaphore
     sem_wait(sem_i2c);
 
     i2cCntrl(TEMP_SENSOR_ADDR);
 
     tempData = readTemp();
-    
+
     // Release Mutex
     sem_post(sem_i2c);
-    
+
     if(UNIT == CELSIUS)
       tempData = tempData;
     else if (UNIT == FAHRENHEIT)
@@ -61,18 +74,18 @@ void tempSensorTrigger () {
 
 
 void *tempSensorHandler (void *arg) {
-    initTimer(1*1000000000, tempSensorTrigger);
+    initTimer(TEMPERATURE_SENSING_INTERVAL*1000000000, tempSensorTrigger);
 
     int ret;
     latestTemp = (tempUpdate *)malloc(sizeof(latestTemp));
 
-    // Take Mutex
+    //Acquire the semaphore
     sem_wait(sem_i2c);
     i2cCntrl(TEMP_SENSOR_ADDR);
     ret = writeConfig();
     // Release Mutex
     sem_post(sem_i2c);
-    
+
     if (ret != 0) {
       enQueueForLog(ERROR, "Could not configure temperature sensor",0);
       latestTemp->sensorConnected=false;
@@ -95,7 +108,7 @@ void *tempSensorHandler (void *arg) {
     if (ret != 0) {
       enQueueForLog(ERROR, "Unable to set edge for Temperature Alert pin", 0);
     }
-    
+
     // Initialize polling for interrupt
     pollInit(7, &pollFds);
 
