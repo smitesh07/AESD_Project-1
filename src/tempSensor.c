@@ -1,6 +1,6 @@
 /**
  * @file tempSensor.c
- * @author Ashish Tak
+ * @author Ashish Tak and Smitesh Modak
  * @brief : Source file for the temperature sensing thread operations
  * @version 0.1
  * @date 2019-03-31
