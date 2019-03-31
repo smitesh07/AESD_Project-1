@@ -11,8 +11,14 @@
 #include <stdbool.h>
 #include "timer.h"
 
+#define UNIT CELSIUS
 extern float tempData;
 
+typedef enum {
+    CELSIUS,
+    FAHRENHEIT,
+    KELVIN
+}UNIT_t;
 typedef struct {
     bool sensorConnected;
     float temp;

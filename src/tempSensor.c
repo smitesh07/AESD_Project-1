@@ -22,12 +22,24 @@ void tempSensorTrigger () {
     i2cCntrl(TEMP_SENSOR_ADDR);
 
     tempData = readTemp();
+    if(UNIT == CELSIUS)
+      tempData = tempData;
+    else if (UNIT == FAHRENHEIT)
+      tempData = (tempData * 9 / 5) + 32;
+    else if (UNIT == KELVIN)
+      tempData = tempData +  273.15;
+
     if (tempData == -1) {
       latestTemp->sensorConnected=false;
     } else {
       latestTemp->sensorConnected=true;
       printf("Temperature Value in deg C: %f",tempData);
-      enQueueForLog(INFO, "Temperature Value in deg C: ",tempData);
+      if(UNIT == CELSIUS)
+        enQueueForLog(INFO, "Temperature Value in deg C: ",tempData);
+      else if (UNIT == FAHRENHEIT)
+        enQueueForLog(INFO, "Temperature Value in deg F: ",tempData);
+      else if (UNIT == KELVIN)
+        enQueueForLog(INFO, "Temperature Value in kelvin: ",tempData);
     }
 
     ret = poll(pollFds.poll_fds, 1, POLL_TIMEOUT);
