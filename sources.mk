@@ -6,7 +6,9 @@ SRCS = src/main.c \
        src/queue.c \
 	   src/lumSensor.c \
 	   src/i2c.c \
-	   src/tmp102.c
+	   src/tmp102.c \
+	   src/SimpleGPIO.c \
+	   src/pollInt.c \
 
 #Defining paths for the header files
 INCLUDE_H = includes/
