@@ -15,6 +15,7 @@
 #include "log.h"
 #include "apds9301.h"
 
+#define LUM_ALERT_PIN   60
 
 typedef enum {
     DARK=0,
