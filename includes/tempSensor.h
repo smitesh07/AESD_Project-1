@@ -1,3 +1,6 @@
+#ifndef SRC_TEMPSENSOR_H_
+#define SRC_TEMPSENSOR_H_
+
 #include <sys/time.h>
 #include <sys/syscall.h>
 #include <time.h>
@@ -5,9 +8,15 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "timer.h"
 
 extern float tempData;
+
+typedef struct {
+    bool sensorConnected;
+    float temp;
+}tempUpdate;
 
 //Prototypes
 
@@ -30,3 +39,5 @@ void *tempSensorHandler (void *arg);
  * 
  */
 void tempSensorTrigger (void);
+
+#endif /* SRC_TEMPSENSOR_H_ */

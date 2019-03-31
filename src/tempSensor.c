@@ -19,32 +19,24 @@ void tempHeartbeatTimerHandler () {
 poll_t pollFds;
 float tempData;
 
+tempUpdate *latestTemp;
+
 void tempSensorTrigger () {
-    static int count = 0;     // count to configure sensor only once
     int n;
     int ret;
-
-    // //Read temperature from the sensor
-    // usleep(50); //Mocking the amount of time required for the read
-    // static uint32_t temp=0;
-    // // printf("\nTemp: %d degrees", temp++);
-    // enQueueForLog(INFO, "Temp Value: ", temp++);
-    // fflush(stdout);
 
     // Take mutex
     sem_wait(sem_i2c);
 
     i2cCntrl(TEMP_SENSOR_ADDR);
 
-    if (count == 0) {
-      ret = writeConfig();
-      if (ret != 0) {
-        enQueueForLog(ERROR, "Could not configure temperature sensor",0);
-      }
-    }
-
     tempData = readTemp();
-    enQueueForLog(INFO, "Temperature Value in deg C: ",tempData);
+    if (tempData == -1) {
+      latestTemp->sensorConnected=false;
+    } else {
+      latestTemp->sensorConnected=true;
+      enQueueForLog(INFO, "Temperature Value in deg C: ",tempData);
+    }
 
     ret = poll(pollFds.poll_fds, 1, POLL_TIMEOUT);
     if (ret > 0) {
@@ -69,13 +61,20 @@ void *tempSensorHandler (void *arg) {
     initTimer(threadID, 1*1000000000, tempSensorTrigger);
 
     int ret;
-    // Open I2C
-    /*
-    ret = i2cOpen();
-    if (ret < 0) {
-      enQueueForLog(ERROR, "Failed to open I2C bus", 0);
+    latestTemp = (tempUpdate *)malloc(sizeof(latestTemp));
+
+    // Take Mutex
+    sem_wait(sem_i2c);
+    i2cCntrl(TEMP_SENSOR_ADDR);
+    ret = writeConfig();
+    if (ret != 0) {
+      enQueueForLog(ERROR, "Could not configure temperature sensor",0);
+      latestTemp->sensorConnected=false;
+    } else {
+      latestTemp->sensorConnected=true;
     }
-    */
+    // Release Mutex
+    sem_post(sem_i2c);
 
     // Setup pin 7 for interrupt
     ret = gpio_export(TEMP_ALERT_PIN);
