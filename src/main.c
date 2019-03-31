@@ -23,6 +23,9 @@
 #include "queue.h"
 #include "lumSensor.h"
 #include "socket.h"
+#include "i2c.h"
+
+#define SEM_I2C "/sem_i2c"
 
 /**
  * @brief Timer callback function to check the heartbeat messages from the Message Queue
@@ -63,6 +66,12 @@ void main()
 
     printf("\nMain spawned");
     fflush(stdout);
+
+    sem_i2c = sem_open(SEM_I2C, O_RDWR | O_CREAT, 0666, 1);
+    if (sem_i2c == SEM_FAILED || sem_i2c == SEM_FAILED)
+        perror("sem_open failed\n");
+
+    i2cOpen();
 
     pthread_create (&logger, NULL, loggerHandler, NULL);
     pthread_create (&tempSensor, NULL, tempSensorHandler, NULL);

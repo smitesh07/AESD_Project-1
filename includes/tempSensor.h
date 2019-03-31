@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include "timer.h"
 
+extern float tempData;
+
 //Prototypes
 
 /**

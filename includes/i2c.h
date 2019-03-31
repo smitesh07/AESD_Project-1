@@ -11,6 +11,22 @@
 #ifndef SRC_I2C_H_
 #define SRC_I2C_H_
 
+#include <errno.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <linux/i2c-dev.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <semaphore.h>
+
+
+sem_t *sem_i2c;
+
 /**
  * @brief       open the i2c bus
  * 

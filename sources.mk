@@ -9,6 +9,8 @@ SRCS = src/main.c \
 	   src/tmp102.c \
 	   src/SimpleGPIO.c \
 	   src/pollInt.c \
+	   src/socket.c \
+	   src/apds9301.c
 
 #Defining paths for the header files
 INCLUDE_H = includes/

@@ -17,6 +17,7 @@ void tempHeartbeatTimerHandler () {
 */
 
 poll_t pollFds;
+float tempData;
 
 void tempSensorTrigger () {
     static int count = 0;     // count to configure sensor only once
@@ -31,6 +32,7 @@ void tempSensorTrigger () {
     // fflush(stdout);
 
     // Take mutex
+    sem_wait(sem_i2c);
 
     i2cCntrl(TEMP_SENSOR_ADDR);
 
@@ -41,7 +43,7 @@ void tempSensorTrigger () {
       }
     }
 
-    float tempData = readTemp();
+    tempData = readTemp();
     enQueueForLog(INFO, "Temperature Value in deg C: ",tempData);
 
     ret = poll(pollFds.poll_fds, 1, POLL_TIMEOUT);
@@ -55,6 +57,7 @@ void tempSensorTrigger () {
     }
 
     // Release Mutex
+    sem_post(sem_i2c);
 
     return;
 }
@@ -67,10 +70,12 @@ void *tempSensorHandler (void *arg) {
 
     int ret;
     // Open I2C
+    /*
     ret = i2cOpen();
     if (ret < 0) {
       enQueueForLog(ERROR, "Failed to open I2C bus", 0);
     }
+    */
 
     // Setup pin 7 for interrupt
     ret = gpio_export(TEMP_ALERT_PIN);

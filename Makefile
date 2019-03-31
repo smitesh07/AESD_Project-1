@@ -28,7 +28,7 @@ all: $(TARGET)
 	#scp -r ../BBG root@10.0.0.69:/Smith/
 
 $(TARGET): $(OBJS)
-	$(CC) $(CPPFLAGS) $(OBJS) -o $@ -lpthread -lrt
+	$(CC) $(CPPFLAGS) $(OBJS) -o $@ -lpthread -lrt -lm
 
 clean:
 	rm -f $(OBJS) $(TARGET)

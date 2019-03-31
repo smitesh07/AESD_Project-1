@@ -11,6 +11,7 @@
 void *externSocketHandler (void *arg) {
     int sockDescriptor = 0, sockAccepted = 0, n=0;
     struct sockaddr_in serv_addr;
+    luxUpdate * latestLux = (luxUpdate *)malloc(sizeof(luxUpdate));
 
     char txBuffer[BUFFER_MAX_SIZE], rxBuffer[QUERY_MAX_SIZE];
 
@@ -47,17 +48,23 @@ void *externSocketHandler (void *arg) {
                 TODO: Depending on the command call the required APIs or return the last logging result
                 */ 
                 if (!strcmp(rxBuffer,"temp")) {
-                    strcpy(txBuffer, "Temp: 30 degrees");
+                    sprintf(txBuffer, "Temp: %f", tempData);
                 }
                 else if (!strcmp(rxBuffer,"lum")) {
-                    strcpy(txBuffer, "Lum: 40 %");
+                    latestLux = externReadLum();
+                    if (latestLux->sensorConnected) {
+                        sprintf(txBuffer, "Luminosity: %f. It is %s", latestLux->lux, (latestLux->brightnessState?"light":"dark"));    
+                    }
+                    else {
+                        sprintf(txBuffer, "Luminous sensor disconnected");
+                    }
                 }
                 else if (!strcmp(rxBuffer,"term")){
                     //Break on receiving the termination signal and proceed to close the file descriptor (i.e. socket) 
                     break;
                 }
                 else {
-                    strcpy(txBuffer, "Invalid query. Try again");
+                    sprintf(txBuffer, "Invalid query. Try again");
                 }
                 write(sockAccepted, txBuffer, strlen(txBuffer));
             }

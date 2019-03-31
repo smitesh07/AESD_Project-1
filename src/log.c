@@ -70,6 +70,7 @@ void *loggerHandler(void *arg) {
     // initTimer(threadID, 2000000000, loggerHeartbeatTimerHandler);
     while (1) {
       deQueueFromLog();
+      fflush(filePtr);
       //Call the function HERE to send the heartbeat signal to the message queue
       sleep(1);
     }
