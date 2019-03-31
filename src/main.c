@@ -51,18 +51,6 @@ void main()
     char path[] = "/OpenTest_MQ";
     logInit(logFile);
     initQueue(path);
-    // enQueueForLog(4, "Priority 4", 2);
-    // enQueueForLog(5, "Priority 5", 2);
-    // enQueueForLog(6, "Priority 6", 2);
-    // enQueueForLog(2, "Priority 3", 2);
-    // enQueueForLog(3, "Priority 3", 2);
-    // enQueueForLog(1, "Priority 1", 2);
-    // deQueueFromLog();
-    // deQueueFromLog();
-    // deQueueFromLog();
-    // deQueueFromLog();
-    // deQueueFromLog();
-    // deQueueFromLog();
 
     printf("\nMain spawned");
     fflush(stdout);
