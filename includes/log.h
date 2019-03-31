@@ -42,7 +42,7 @@ typedef enum {
 typedef struct {
   LOG_LEVEL level;
   char msg[50];
-  int value;
+  float value;
   // pid_t pid;
 } LOG_t;
 

@@ -41,7 +41,7 @@ void initQueue(char *queueName) {
         perror("mq_open()");
 }
 
-void enQueueForLog(LOG_LEVEL level, char *msg, int value) {
+void enQueueForLog(LOG_LEVEL level, char *msg, float value) {
     /* pointer to priority queue */
     QUEUE_t *prioQueue;
     prioQueue = (QUEUE_t *)malloc(sizeof(QUEUE_t));
@@ -80,7 +80,7 @@ void deQueueFromLog(void) {
             else if ((prioQueue->logQueue).level == WARN)
                 LOG_WARN("%s",(prioQueue->logQueue).msg); 
             else if ((prioQueue->logQueue).level == INFO)
-                LOG_INFO("%s%d",(prioQueue->logQueue).msg, (prioQueue->logQueue).value);
+                LOG_INFO("%s%f",(prioQueue->logQueue).msg, (prioQueue->logQueue).value);
             else if ((prioQueue->logQueue).level == DEBUG)
                 LOG_DEBUG("%s",(prioQueue->logQueue).msg);
         }                

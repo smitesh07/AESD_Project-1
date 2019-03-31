@@ -37,7 +37,7 @@ void initQueue(char *queueName);
  * @param msg     message
  * @param value   value from the sensors
  */
-void enQueueForLog(LOG_LEVEL level, char *msg, int value);
+void enQueueForLog(LOG_LEVEL level, char *msg, float value);
 
 /**
  * @brief dequeue from the logger queue and LOG it
