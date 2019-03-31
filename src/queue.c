@@ -64,7 +64,7 @@ void deQueueFromLog(void) {
     QUEUE_t *prioQueue;
     prioQueue = (QUEUE_t *)malloc(sizeof(QUEUE_t));
     LOG_LEVEL prio;
-    printf("Current messages %d", attr.mq_curmsgs);
+    // printf("Current messages %d", attr.mq_curmsgs);
     // if (attr.mq_curmsgs > 0) {
         // printf("After");
         // There are some messages on this queue....eat em

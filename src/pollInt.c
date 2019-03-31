@@ -27,7 +27,6 @@ void pollInit(unsigned int gpio, poll_t *pollFds)
     pollFds->f = open(buf, O_RDONLY);
     if (pollFds->f == -1) {
         perror("gpio/fd_open");
-        return NULL;
     }
     
     n = read(pollFds->f, &(pollFds->value), sizeof(pollFds->value));
