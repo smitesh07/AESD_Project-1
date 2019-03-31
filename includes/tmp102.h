@@ -1,7 +1,7 @@
 /**
  * @file tmp102.h
  * @author Smitesh Modak and Ashish Tak
- * @brief header file containing function prototypes, enums and macros
+ * @brief : Header file containing function prototypes, enums and macros for the Temperature Sensor TMP102 library
  * @version 0.1
  * @date 2019-03-26
  * 

@@ -1,3 +1,14 @@
+/**
+ * @file socket.c
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Implementation file for the Remote Socket Request handling task
+ * @version 0.1
+ * @date 2019-03-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #include "socket.h"
 
 

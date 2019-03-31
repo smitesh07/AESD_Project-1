@@ -1,6 +1,6 @@
 #  File name: Makefile
 #  Description: Makefile
-#  Author: Smitesh Modak
+#  Author: Smitesh Modak and Ashish Tak
 #  Date: 02/27/2019
 
 include sources.mk

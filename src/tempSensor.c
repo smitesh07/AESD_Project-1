@@ -1,3 +1,14 @@
+/**
+ * @file tempSensor.c
+ * @author Ashish Tak
+ * @brief : Source file for the temperature sensing thread operations
+ * @version 0.1
+ * @date 2019-03-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #include "tempSensor.h"
 #include "queue.h"
 #include "log.h"
@@ -6,6 +17,8 @@
 #include "SimpleGPIO.h"
 #include "pollInt.h"
 #include <poll.h>
+
+#define TEMPERATURE_SENSING_INTERVAL 1 //in seconds
 
 poll_t pollFds;
 float tempData;
@@ -16,7 +29,7 @@ void tempSensorTrigger () {
     int n;
     int ret;
 
-    // Take mutex
+    //Acquire the semaphore
     sem_wait(sem_i2c);
 
     i2cCntrl(TEMP_SENSOR_ADDR);
@@ -52,7 +65,7 @@ void tempSensorTrigger () {
         lseek(pollFds.f, 0, SEEK_SET);
     }
 
-    // Release Mutex
+    // Release semaphore
     sem_post(sem_i2c);
 
     return;
@@ -60,12 +73,12 @@ void tempSensorTrigger () {
 
 
 void *tempSensorHandler (void *arg) {
-    initTimer(1*1000000000, tempSensorTrigger);
+    initTimer(TEMPERATURE_SENSING_INTERVAL*1000000000, tempSensorTrigger);
 
     int ret;
     latestTemp = (tempUpdate *)malloc(sizeof(latestTemp));
 
-    // Take Mutex
+    //Acquire the semaphore
     sem_wait(sem_i2c);
     i2cCntrl(TEMP_SENSOR_ADDR);
     ret = writeConfig();
@@ -75,7 +88,7 @@ void *tempSensorHandler (void *arg) {
     } else {
       latestTemp->sensorConnected=true;
     }
-    // Release Mutex
+    // Release semaphore
     sem_post(sem_i2c);
 
     // Setup pin 7 for interrupt

@@ -28,7 +28,6 @@ extern FILE *filePtr;
 * INFO for infrequent status updates
 * DEBUG for detailed updates, useful when troubleshooting a specific code path
 */
-
 typedef enum {
   ERROR,
   WARN,

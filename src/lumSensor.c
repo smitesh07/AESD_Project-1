@@ -1,3 +1,14 @@
+/**
+ * @file lumSensor.c
+ * @author Smitesh Modak and Ashish Tak
+ * @brief : Source file for the luminosity sensing thread operations
+ * @version 0.1
+ * @date 2019-03-31
+ * 
+ * @copyright Copyright (c) 2019
+ * 
+ */
+
 #include "lumSensor.h"
 
 
@@ -5,6 +16,8 @@
 
 //Threshold for the actual luminosity value to determine whether it's 'light' or 'dark'
 #define DARKNESS_THRESHOLD 5
+
+#define LUMINOSITY_SENSING_INTERVAL 1 //in seconds
 
 
 lumState currentState= LIGHT;
@@ -49,7 +62,7 @@ void *lumSensorHandler (void *arg) {
       latestLux->sensorConnected=true;
     }
     sem_post(sem_i2c);
-    initTimer(1*1000000000, lumSensorTrigger);
+    initTimer(LUMINOSITY_SENSING_INTERVAL*1000000000, lumSensorTrigger);
     while (1) {
       //Call the function HERE to send the heartbeat signal to the message queue
       sleep(1);
