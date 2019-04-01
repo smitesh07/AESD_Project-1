@@ -25,7 +25,7 @@ mqd_t mqdes;
 
 void initQueue(char *queueName) {
     // First we need to set up the attribute structure
-    attr.mq_maxmsg = 10;
+    attr.mq_maxmsg = 100;
     attr.mq_msgsize = sizeof(QUEUE_t);
     attr.mq_flags = 0;
 
