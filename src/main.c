@@ -52,14 +52,14 @@ void heartbeatTimerHandler () {
         lumHeartbeatFlag=false;
     else {
         enQueueForLog(ERROR, "Luminosity sensing thread is DEAD!! Issuing pthread_cancel().. ", 0);
-        pthread_cancel(lumSensor);
+        pthread_cancel(&lumSensor);
     }
 
     if (logHeartbeatFlag)
         logHeartbeatFlag=false;
     else {
         enQueueForLog(ERROR, "Logger thread is DEAD!! Issuing pthread_cancel().. ", 0);
-        pthread_cancel(logger);
+        pthread_cancel(&logger);
     }
     
     return;
