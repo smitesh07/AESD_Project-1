@@ -56,12 +56,11 @@ void lumSensorTrigger () {
         // n = read(pollFds.f, &(pollFds.value), sizeof(pollFds.value));
         gpio_set_value(USR_LED1, 1);
         enQueueForLog(INFO, "Luminosity Sensor Interrupt Received",0);
-        // lseek(pollFds.f, 0, SEEK_SET);
+        lseek(pollFds.f, 0, SEEK_SET);
     }
     else {
-        printf("\nInside else part lum");
         gpio_set_value(USR_LED1, 0);
-        // lseek(pollFds.f, 0, SEEK_SET);
+        lseek(pollFds.f, 0, SEEK_SET);
     }
     return;
 }
@@ -110,7 +109,10 @@ void *lumSensorHandler (void *arg) {
       //Main sets this global flag on receiving the SIGINT signal from user
       if (terminateSignal) {
         enQueueForLog(WARN, "Termination signal received to Luminosity sensing thread.", 0);
+        deQueueFromLog();
+        //Cleanup procedure for Luminosity Sensor thread
         timer_delete(lumTimerid);
+        free (latestLux);
         break;
       }
       sleep(1);

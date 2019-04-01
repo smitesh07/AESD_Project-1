@@ -21,6 +21,8 @@
 #include <unistd.h>
 #include "timer.h"
 
+#define LOG_MAX_LENGTH 100
+
 extern FILE *filePtr;
 
 extern bool logHeartbeatFlag;
@@ -44,7 +46,7 @@ typedef enum {
 */
 typedef struct {
   LOG_LEVEL level;
-  char msg[50];
+  char msg[LOG_MAX_LENGTH];
   float value;
   // pid_t pid;
 } LOG_t;
