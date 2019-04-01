@@ -1,12 +1,12 @@
 /**
  * @file main.c
  * @author Smitesh Modak and Ashish Tak
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2019-03-18
- * 
+ *
  * @copyright Copyright (c) 2019
- * 
+ *
  */
 
 #include <stdio.h>
@@ -18,6 +18,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <mqueue.h>
+#include <signal.h>
 #include "log.h"
 #include "timer.h"
 #include "tempSensor.h"
@@ -26,6 +27,7 @@
 #include "socket.h"
 #include "i2c.h"
 
+
 //Semaphore to synchronize access the I2C bus
 #define SEM_I2C "/sem_i2c"
 
@@ -33,9 +35,15 @@
 
 pthread_t logger, tempSensor, lumSensor, externSocket;
 
+//Global flag to be set by main on receiving the SIGINT signal
+bool terminateSignal= false;
+
+timer_t mainTimerid;
+
+
 /**
- * @brief Timer callback function to check the heartbeat messages from individual threads
- * 
+ * @brief Timer callback function to check (and reset) the heartbeat flags from individual threads
+ *
  */
 void heartbeatTimerHandler () {
     printf("\nMain thread heartbeat timeout\n");
@@ -59,15 +67,41 @@ void heartbeatTimerHandler () {
         logHeartbeatFlag=false;
     else {
         enQueueForLog(ERROR, "Logger thread is DEAD!! Issuing pthread_cancel().. ", 0);
+        deQueueFromLog();
+        fflush(filePtr);
         pthread_cancel(&logger);
     }
-    
+
     return;
 }
 
+
+/**
+ * @brief Signal handler for the SIGINT signal
+ *
+ * @param signal
+ */
+void sigHandler (int signal) {
+	switch (signal) {
+		case SIGINT:
+            //Set the flag to give a termination signal to all threads.
+            //Since the flag is written to only once in the lifetime of
+            //the program, no synchronization is required
+			terminateSignal=true;
+            //Explictly send a signal to the External Socket handling thread,
+            //since its blocking on external requests and does not periodically
+            //monitor any termination signal / flag
+            pthread_kill(externSocket, SIGUSR1);
+			break;
+		default:
+			break;
+	}
+}
+
+
 /**
  * @brief Main
- * 
+ *
  */
 int main(int argc, char *argv[])
 {
@@ -96,19 +130,35 @@ int main(int argc, char *argv[])
 
     i2cOpen();
 
+    //Register the signal handler for the termination signal (SIGINT) from the user
+    struct sigaction sa;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_handler=&sigHandler;
+	sa.sa_flags=0;
+	sigaction(SIGINT, &sa, NULL);
+
     pthread_create (&logger, NULL, loggerHandler, NULL);
     pthread_create (&tempSensor, NULL, tempSensorHandler, NULL);
-    // pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);  
+    // pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);
     pthread_create (&externSocket, NULL, externSocketHandler, NULL);
 
-    initTimer(HEARTBEAT_TIMEOUT*(uint64_t)1000000000, heartbeatTimerHandler);
-
+    mainTimerid= initTimer(HEARTBEAT_TIMEOUT*(uint64_t)1000000000, heartbeatTimerHandler);
 
     pthread_join(logger, NULL);
+    printf("\nLogger thread joined");
 	pthread_join(tempSensor, NULL);
-    // pthread_join(lumSensor, NULL);
+    printf("\nTemperature Sensor thread joined");
+    pthread_join(lumSensor, NULL);
+    printf("\nLuminosity Sensor thread joined");
     pthread_join(externSocket, NULL);
+    printf("\nExternal Socket Handler thread joined");
+    fflush(stdout);
     logFlush();
+
+    timer_delete(mainTimerid);
+    printf("\nMain thread terminating..");
+    fflush(stdout);
+
     mq_unlink (path);
 
     return 0;

@@ -22,5 +22,7 @@
  * 
  * @param nanosec - Timeout interval in nanoseconds (used for both the initial timeout and repetitive interval)
  * @param *callbackFunction() - The callback function which needs to be associated with the timer
+ * 
+ * @return timer_t : Timer ID of the created timer (-1 for failure in creation)
  */
-int initTimer(uint64_t nanosec, void (*callbackFunction)());
+timer_t initTimer(uint64_t nanosec, void (*callbackFunction)());
