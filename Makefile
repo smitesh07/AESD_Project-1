@@ -25,7 +25,9 @@ OBJS = $(SRCS:.c=.o)
 .PHONY: all clean
 
 all: $(TARGET)
-	scp -r test root@10.0.0.67:/Project1/Test/
+ifeq ($(PLATFORM),BBG)
+	scp -r project1 root@10.0.0.67:/Project1/Test/
+endif
 
 $(TARGET): $(OBJS)
 	$(CC) $(CPPFLAGS) $(OBJS) -o $@ -lpthread -lrt -lm
