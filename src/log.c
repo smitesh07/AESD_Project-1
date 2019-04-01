@@ -62,7 +62,7 @@ void *loggerHandler(void *arg) {
     while (1) {
       deQueueFromLog();
       fflush(filePtr);
-      //Call the function HERE to send the heartbeat signal to the message queue
+      logHeartbeatFlag=true;
       sleep(1);
     }
 }

@@ -12,6 +12,7 @@
 #define SRC_LOG_H_
 #include <inttypes.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <sys/time.h>
 #include <sys/syscall.h>
 #include <time.h>
@@ -21,6 +22,8 @@
 #include "timer.h"
 
 extern FILE *filePtr;
+
+bool logHeartbeatFlag;
 
 /*
 * ERROR for unexpected conditions which should never occur

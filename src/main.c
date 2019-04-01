@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <inttypes.h>
 #include <pthread.h>
 #include <signal.h>
@@ -28,21 +29,41 @@
 //Semaphore to synchronize access the I2C bus
 #define SEM_I2C "/sem_i2c"
 
-#define HEARTBEAT_TIMEOUT 2 //in seconds
+#define HEARTBEAT_TIMEOUT 10 //in seconds
 
+pthread_t logger, tempSensor, lumSensor, externSocket;
 
 /**
  * @brief Timer callback function to check the heartbeat messages from individual threads
  * 
  */
 void heartbeatTimerHandler () {
-    //Check the message queue for heartbeat messages from individual threads
     printf("\nMain thread heartbeat timeout\n");
     fflush(stdout);
+
+    if (tempHeartbeatFlag)
+        tempHeartbeatFlag=false;
+    else {
+        enQueueForLog(ERROR, "Temperature sensing thread is DEAD!! Issuing pthread_cancel().. ", 0);
+        pthread_cancel(&tempSensor);
+    }
+
+    if (lumHeartbeatFlag)
+        lumHeartbeatFlag=false;
+    else {
+        enQueueForLog(ERROR, "Luminosity sensing thread is DEAD!! Issuing pthread_cancel().. ", 0);
+        pthread_cancel(lumSensor);
+    }
+
+    if (logHeartbeatFlag)
+        logHeartbeatFlag=false;
+    else {
+        enQueueForLog(ERROR, "Logger thread is DEAD!! Issuing pthread_cancel().. ", 0);
+        pthread_cancel(logger);
+    }
+    
     return;
 }
-
-pthread_t logger, tempSensor, lumSensor, externSocket;
 
 /**
  * @brief Main
@@ -80,7 +101,7 @@ int main(int argc, char *argv[])
     pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);  
     pthread_create (&externSocket, NULL, externSocketHandler, NULL);
 
-    initTimer(HEARTBEAT_TIMEOUT*1000000000, heartbeatTimerHandler);
+    initTimer(HEARTBEAT_TIMEOUT*(uint64_t)1000000000, heartbeatTimerHandler);
 
 
     pthread_join(logger, NULL);

@@ -23,7 +23,10 @@
 #include "timer.h"
 
 #define UNIT CELSIUS
+
 extern float tempData;
+
+bool tempHeartbeatFlag;
 
 typedef enum {
     CELSIUS,
