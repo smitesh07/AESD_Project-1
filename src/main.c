@@ -32,6 +32,7 @@
 #define SEM_I2C "/sem_i2c"
 
 #define HEARTBEAT_TIMEOUT 10 //in seconds
+#define FILENAME_MAX_LEN 50
 
 pthread_t logger, tempSensor, lumSensor, externSocket;
 
@@ -105,14 +106,15 @@ void sigHandler (int signal) {
  */
 int main(int argc, char *argv[])
 {
-    char logFile[50];
-    char fileName[50];
+    char logFile[FILENAME_MAX_LEN];
+    char fileName[FILENAME_MAX_LEN];
 
     if (argc > 1) {
       strcpy(logFile, argv[1]);
       strcpy(fileName, argv[2]);
       strcat(logFile,fileName);
-    } else {
+    } 
+    else {
         strcpy(logFile, "log.txt");
     }
 
@@ -144,21 +146,20 @@ int main(int argc, char *argv[])
 
     mainTimerid= initTimer(HEARTBEAT_TIMEOUT*(uint64_t)1000000000, heartbeatTimerHandler);
 
-    pthread_join(logger, NULL);
-    printf("\nLogger thread joined");
-	pthread_join(tempSensor, NULL);
-    printf("\nTemperature Sensor thread joined");
+    pthread_join(tempSensor, NULL);
     pthread_join(lumSensor, NULL);
-    printf("\nLuminosity Sensor thread joined");
     pthread_join(externSocket, NULL);
-    printf("\nExternal Socket Handler thread joined");
-    fflush(stdout);
+    pthread_join(logger, NULL);
+
+    enQueueForLog(WARN, "Main thread terminating..", 0);
+    deQueueFromLog();
+    fflush(filePtr);
     logFlush();
 
+    //Cleanup procedure for main()
     timer_delete(mainTimerid);
-    printf("\nMain thread terminating..");
-    fflush(stdout);
-
+    i2cClose();
+    sem_unlink(SEM_I2C);
     mq_unlink (path);
 
     return 0;

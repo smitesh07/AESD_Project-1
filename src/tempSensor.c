@@ -129,6 +129,7 @@ void *tempSensorHandler (void *arg) {
       //Main sets this global flag on receiving the SIGINT signal from user
       if (terminateSignal) {
         enQueueForLog(WARN, "Termination signal received to Temperature sensing thread.", 0);
+        deQueueFromLog();
         timer_delete(tempTimerid);
         break;
       }

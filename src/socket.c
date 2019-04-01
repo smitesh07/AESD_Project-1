@@ -20,7 +20,8 @@
 
 
 int sockAccepted = 0;
-
+luxUpdate * latestLux;
+tempUpdate * latestTemp;
 
 /**
  * @brief Signal handler for the SIGUSR1 signal
@@ -30,11 +31,15 @@ int sockAccepted = 0;
 void socketSigHandler (int signal) {
 	switch (signal) {
 		case SIGUSR1:
+            //Cleanup procedure..
             if (sockAccepted>0) {
                 //Close the socket if a valid connection is open
                 close(sockAccepted);
             }
+            free (latestLux);
+            free (latestTemp);
             enQueueForLog(WARN, "Termination signal received to Socket Handler thread.",0);
+            deQueueFromLog();
 			pthread_exit();
 			break;
 		default:
@@ -46,8 +51,8 @@ void socketSigHandler (int signal) {
 void *externSocketHandler (void *arg) {
     int sockDescriptor = 0, n=0;
     struct sockaddr_in serv_addr;
-    luxUpdate * latestLux = (luxUpdate *)malloc(sizeof(luxUpdate));
-    tempUpdate * latestTemp = (tempUpdate *)malloc(sizeof(tempUpdate));
+    latestLux = (luxUpdate *)malloc(sizeof(luxUpdate));
+    latestTemp = (tempUpdate *)malloc(sizeof(tempUpdate));
 
     char txBuffer[BUFFER_MAX_SIZE], rxBuffer[QUERY_MAX_SIZE];
 
