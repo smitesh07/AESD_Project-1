@@ -25,8 +25,8 @@
 #define UNIT CELSIUS
 
 extern float tempData;
-
-bool tempHeartbeatFlag;
+extern bool terminateSignal;
+extern bool tempHeartbeatFlag;
 
 typedef enum {
     CELSIUS,

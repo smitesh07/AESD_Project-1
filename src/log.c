@@ -19,6 +19,7 @@
 #include "queue.h"
 
 FILE *filePtr;
+bool logHeartbeatFlag;
 
 uint32_t loggerGetTimestamp(void) {
   /* Current date and time */
@@ -57,12 +58,18 @@ void logFlush(void) {
 void *loggerHandler(void *arg) {
     printf("\nLogger thread spawned");
     fflush(stdout);
-    // uint32_t threadID= (pid_t)syscall(SYS_gettid);
-    // initTimer(threadID, 2000000000, loggerHeartbeatTimerHandler);
     while (1) {
       deQueueFromLog();
       fflush(filePtr);
+      //Periodically set the heartbeat flag to be checked by main()
       logHeartbeatFlag=true;
+      //Main sets this global flag on receiving the SIGINT signal from user
+      if (terminateSignal) {
+        enQueueForLog(WARN, "Termination signal received to Logger thread.", 0);
+        deQueueFromLog();
+        fflush(filePtr);
+        break;
+      }
       sleep(1);
     }
 }

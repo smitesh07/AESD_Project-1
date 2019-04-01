@@ -19,8 +19,32 @@
 #define MAX_QUEUED_CONNECTIONS 10
 
 
+int sockAccepted = 0;
+
+
+/**
+ * @brief Signal handler for the SIGUSR1 signal
+ * 
+ * @param signal 
+ */
+void socketSigHandler (int signal) {
+	switch (signal) {
+		case SIGUSR1:
+            if (sockAccepted>0) {
+                //Close the socket if a valid connection is open
+                close(sockAccepted);
+            }
+            enQueueForLog(WARN, "Termination signal received to Socket Handler thread.",0);
+			pthread_exit();
+			break;
+		default:
+			break;
+	}
+}
+
+
 void *externSocketHandler (void *arg) {
-    int sockDescriptor = 0, sockAccepted = 0, n=0;
+    int sockDescriptor = 0, n=0;
     struct sockaddr_in serv_addr;
     luxUpdate * latestLux = (luxUpdate *)malloc(sizeof(luxUpdate));
     tempUpdate * latestTemp = (tempUpdate *)malloc(sizeof(tempUpdate));
@@ -33,6 +57,13 @@ void *externSocketHandler (void *arg) {
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(NW_PORT_NUMBER);
+
+    //Register a signal handler for the SIGUSR1 signal
+    struct sigaction sa;
+	sigemptyset (&sa.sa_mask);
+	sa.sa_handler=&socketSigHandler;
+	sa.sa_flags=0;
+	sigaction(SIGUSR1, &sa, NULL);
 
     //Bind the structure to the created socket
     bind(sockDescriptor, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
@@ -83,7 +114,6 @@ void *externSocketHandler (void *arg) {
                 }
                 write(sockAccepted, txBuffer, strlen(txBuffer));
             }
-            //sleep(1);
 
         }
 

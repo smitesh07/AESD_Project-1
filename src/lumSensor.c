@@ -25,6 +25,8 @@ poll_t pollFds;lumState currentState= LIGHT;
 float lux;
 luxUpdate *latestLux;
 int slaveAddr = LUM_SLAVE_ADDRESS;
+timer_t lumTimerid;
+bool lumHeartbeatFlag;
 
 
 void lumSensorTrigger () {
@@ -78,7 +80,7 @@ void *lumSensorHandler (void *arg) {
     }
     sem_post(sem_i2c);
 
-    initTimer(LUMINOSITY_SENSING_INTERVAL*(uint64_t)1000000000, lumSensorTrigger);
+    lumTimerid= initTimer(LUMINOSITY_SENSING_INTERVAL*(uint64_t)1000000000, lumSensorTrigger);
 
     gpio_export(USR_LED1);
     gpio_set_dir(USR_LED1, OUTPUT_PIN);
@@ -103,7 +105,14 @@ void *lumSensorHandler (void *arg) {
     pollInit(LUM_ALERT_PIN, &pollFds);
 
     while (1) {
+      //Periodically set the heartbeat flag to be checked by main()
       lumHeartbeatFlag=true;
+      //Main sets this global flag on receiving the SIGINT signal from user
+      if (terminateSignal) {
+        enQueueForLog(WARN, "Termination signal received to Luminosity sensing thread.", 0);
+        timer_delete(lumTimerid);
+        break;
+      }
       sleep(1);
     }
 }

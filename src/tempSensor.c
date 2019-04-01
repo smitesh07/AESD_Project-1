@@ -17,11 +17,14 @@
 #include "SimpleGPIO.h"
 #include "pollInt.h"
 #include <poll.h>
+#include <time.h>
 
 #define TEMPERATURE_SENSING_INTERVAL 3 //in seconds
 
 poll_t pollFds;
 float tempData;
+timer_t tempTimerid;
+bool tempHeartbeatFlag;
 
 tempUpdate *latestTemp;
 
@@ -36,7 +39,7 @@ void tempSensorTrigger () {
 
     tempData = readTemp();
 
-    // Release Mutex
+    // Release the semaphore
     sem_post(sem_i2c);
 
     if(UNIT == CELSIUS)
@@ -86,10 +89,10 @@ void *tempSensorHandler (void *arg) {
     ret = writeConfig();
     setHighTemp();
     setLowTemp();
-    // Release Mutex
+    // Release the semaphore
     sem_post(sem_i2c);
 
-    initTimer(TEMPERATURE_SENSING_INTERVAL*(uint64_t)1000000000, tempSensorTrigger);
+    tempTimerid = initTimer(TEMPERATURE_SENSING_INTERVAL*(uint64_t)1000000000, tempSensorTrigger);
 
     if (ret != 0) {
       enQueueForLog(ERROR, "Could not configure temperature sensor",0);
@@ -120,10 +123,15 @@ void *tempSensorHandler (void *arg) {
     // Initialize polling for interrupt
     pollInit(TEMP_ALERT_PIN, &pollFds);
 
-
-
     while (1) {
-      // tempHeartbeatFlag = true;
+      //Periodically set the heartbeat flag to be checked by main()
+      tempHeartbeatFlag = true;
+      //Main sets this global flag on receiving the SIGINT signal from user
+      if (terminateSignal) {
+        enQueueForLog(WARN, "Termination signal received to Temperature sensing thread.", 0);
+        timer_delete(tempTimerid);
+        break;
+      }
       sleep(1);
     }
 }

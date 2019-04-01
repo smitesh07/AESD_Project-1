@@ -12,7 +12,7 @@
 #include "timer.h"
 
 
-int initTimer(uint64_t nanosec, void (*callbackFunction)() ) {
+timer_t initTimer(uint64_t nanosec, void (*callbackFunction)() ) {
     timer_t timerid;
 	struct itimerspec its;
 	struct sigevent sev;
@@ -59,5 +59,5 @@ int initTimer(uint64_t nanosec, void (*callbackFunction)() ) {
 
 	++signalCount;
 
-	return 0;
+	return timerid;
 }

@@ -23,7 +23,8 @@
 
 extern FILE *filePtr;
 
-bool logHeartbeatFlag;
+extern bool logHeartbeatFlag;
+extern bool terminateSignal;
 
 /*
 * ERROR for unexpected conditions which should never occur

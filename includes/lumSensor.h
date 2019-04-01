@@ -39,7 +39,8 @@ typedef struct {
     lumState brightnessState;  
 }luxUpdate;
 
-bool lumHeartbeatFlag;
+extern bool lumHeartbeatFlag;
+extern bool terminateSignal;
 
 
 //Prototypes
