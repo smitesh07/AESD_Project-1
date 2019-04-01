@@ -90,7 +90,7 @@ void *externSocketHandler (void *arg) {
             //Check the number of characters returned from the read() call 
             if (n>0) {
                 rxBuffer[n] = '\0';
-                printf("\nReceived: %s", rxBuffer);
+                // printf("\nReceived: %s", rxBuffer);
 
                 if (!strcmp(rxBuffer,"temp")) {
                     latestTemp= externReadTemp();

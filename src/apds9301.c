@@ -23,6 +23,8 @@
 #define LOW_THRESHOLD   0x20
 #define HIGH_THRESHOLD  0Xb07
 
+#define ID_REGISTER_VALUE 0x50
+
 
 //Register addresses for the APDS-9301 sensor
 enum regAddress {
@@ -45,6 +47,8 @@ char writeBuffer[WORD_SIZE+1] = {0};
 
 
 int initLumSensor() {
+    LOG_INFO("Starting Built-in Startup tests for the Luminosity Sensor");
+
     //Write 00 to the control register to power down the device
     //Power it up again using 0x03 and read the value back
     writeBuffer[0]= CMD_RW_BYTE | CONTROL;
@@ -55,26 +59,35 @@ int initLumSensor() {
     writeBuffer[1]= 0x03;
     i2cWrite(writeBuffer, WORD_SIZE);
     i2cRead(readBuffer, BYTE_SIZE);
-    printf("\nControl register: 0x%x", readBuffer[0]);
+    if (readBuffer[0]!=0x03) {
+        return -1;
+    }
+    LOG_INFO("APDS9301 Control register: 0x%x", readBuffer[0]);
 
 
     //Read the identification register
     writeBuffer[0]= CMD_RW_BYTE | ID;
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, BYTE_SIZE);
-    printf("\nIdentification register: 0x%x", readBuffer[0]);
+    if (readBuffer[0]!=ID_REGISTER_VALUE) {
+        return -1;
+    }
+    LOG_INFO("Identification register: 0x%x", readBuffer[0]);
 
     //Read the timing register
     writeBuffer[0]= CMD_RW_BYTE | TIMING;
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, BYTE_SIZE);
-    printf("\nTiming Register at startup: 0x%x", readBuffer[0]);
+    LOG_INFO("Timing Register at startup: 0x%x", readBuffer[0]);
     //Set high gain and scale the integration time by 0.252 (101ms)
     writeBuffer[1]=0x11;
     i2cWrite(writeBuffer, WORD_SIZE);
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, BYTE_SIZE);
-    printf("\nTiming Register after setting gain and integration scale: 0x%x", readBuffer[0]);
+    if (readBuffer[0]!=0x11){
+        return -1;
+    }
+    LOG_INFO("Timing Register after setting gain and integration scale: 0x%x", readBuffer[0]);
 
     //Set the Interrupt Threshold Registers
     writeBuffer[0]= CMD_RW_WORD | THRESHLOWLOW;
@@ -84,7 +97,10 @@ int initLumSensor() {
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, WORD_SIZE);
     uint16_t threshold= readBuffer[0]+ (((uint16_t)readBuffer[1])<<8);
-    printf("\nLow Threshold: 0x%x",threshold);
+    if (threshold!=LOW_THRESHOLD) {
+        return -1;
+    }
+    LOG_INFO("Low Threshold: 0x%x",threshold);
 
     writeBuffer[0]= CMD_RW_WORD | THRESHHIGHLOW;
     writeBuffer[1]= HIGH_THRESHOLD & 0xFF;
@@ -93,7 +109,10 @@ int initLumSensor() {
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, WORD_SIZE);
     threshold= readBuffer[0]+ (((uint16_t)readBuffer[1])<<8);
-    printf("\nHigh Threshold: 0x%x",threshold);
+    if (threshold!=HIGH_THRESHOLD) {
+        return -1;
+    }
+    LOG_INFO("High Threshold: 0x%x",threshold);
 
     //Enable the level interrupt in the Interrupt Control Register
     //And set persist for 5 cycles of integration
@@ -102,7 +121,10 @@ int initLumSensor() {
     i2cWrite(writeBuffer, WORD_SIZE);
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, BYTE_SIZE);
-    printf("\nInterrupt Control Reg (Level Interrupts enabled): 0x%x",readBuffer[0]);
+    if (readBuffer[0]!=0x15) {
+        return -1;
+    }    
+    LOG_INFO("Interrupt Control Reg (Level Interrupts enabled): 0x%x",readBuffer[0]);
 
     return 0;
 }
@@ -128,8 +150,6 @@ float getLum() {
     i2cWrite(writeBuffer, BYTE_SIZE);
     i2cRead(readBuffer, WORD_SIZE);
     ch1= readBuffer[0] + (uint16_t)(readBuffer[1]<<8);
-
-    printf("\nCH0: 0x%x\nCH1: 0x%x\n", ch0, ch1);
 
     float lux, ratio;
     if (ch0 && ch1) {

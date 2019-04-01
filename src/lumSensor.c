@@ -37,6 +37,7 @@ void lumSensorTrigger () {
     sem_post(sem_i2c);
     if (lux<0) {
       latestLux->sensorConnected=false;
+      enQueueForLog(ERROR, "Luminosity Sensor Disconnected!! Will retry in a few seconds..", 0);
     }
     else {
       latestLux->sensorConnected=true;
@@ -49,7 +50,6 @@ void lumSensorTrigger () {
           enQueueForLog(WARN, "Change in luminosity level. It's now light.", LIGHT);
           currentState= LIGHT;
       }
-      fflush(stdout);
     }
     ret = poll(pollFds.poll_fds, 1, POLL_TIMEOUT);
     if (ret > 0) {
@@ -67,17 +67,19 @@ void lumSensorTrigger () {
 
 
 void *lumSensorHandler (void *arg) {
-    printf("\nLuminosity sensing thread spawned");
-    fflush(stdout);
     int ret;
     latestLux = (luxUpdate *)malloc(sizeof(latestLux));
     sem_wait(sem_i2c);
     i2cCntrl(slaveAddr);
     if (initLumSensor()==-1) {
       latestLux->sensorConnected=false;
+      enQueueForLog(ERROR, "Luminosity Sensor Thread terminating.. Startup Test failed!! ", 0);
+      //The latest Lux structure is retained in memory to cater to the Remote Socket Requests
+      pthread_exit();
     }
     else {
       latestLux->sensorConnected=true;
+      enQueueForLog(DEBUG, "Luminosity Sensor Startup Tests successful! ", 0);
     }
     sem_post(sem_i2c);
 

@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <math.h>
 #include "i2c.h"
+#include "queue.h"
 
 
 /**
