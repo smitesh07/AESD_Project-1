@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 
     pthread_create (&logger, NULL, loggerHandler, NULL);
     pthread_create (&tempSensor, NULL, tempSensorHandler, NULL);
-    // pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);
+    pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);
     pthread_create (&externSocket, NULL, externSocketHandler, NULL);
 
     mainTimerid= initTimer(HEARTBEAT_TIMEOUT*(uint64_t)1000000000, heartbeatTimerHandler);
@@ -160,6 +160,7 @@ int main(int argc, char *argv[])
     timer_delete(mainTimerid);
     i2cClose();
     sem_unlink(SEM_I2C);
+    mq_close(mqdes);
     mq_unlink (path);
 
     return 0;

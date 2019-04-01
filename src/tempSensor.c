@@ -62,7 +62,7 @@ void tempSensorTrigger () {
         enQueueForLog(INFO, "Temperature Value in kelvin: ",tempData);
     }
 
-    printf("Waiting");
+    // printf("Waiting");
     ret = poll(pollFds.poll_fds, 1, POLL_TIMEOUT);
     if (ret > 0) {
         // n = read(pollFds.f, &(pollFds.value), sizeof(pollFds.value));
@@ -130,7 +130,9 @@ void *tempSensorHandler (void *arg) {
       if (terminateSignal) {
         enQueueForLog(WARN, "Termination signal received to Temperature sensing thread.", 0);
         deQueueFromLog();
+        //Cleanup procedure for Temperature sensing thread
         timer_delete(tempTimerid);
+        free(latestTemp);
         break;
       }
       sleep(1);

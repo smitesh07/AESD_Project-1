@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <mqueue.h>
 #include <errno.h>
 #include <string.h>
 #include "log.h"

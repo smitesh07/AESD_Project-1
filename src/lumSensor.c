@@ -67,6 +67,8 @@ void lumSensorTrigger () {
 
 
 void *lumSensorHandler (void *arg) {
+    printf("\nLuminosity sensing thread spawned");
+    fflush(stdout);
     int ret;
     latestLux = (luxUpdate *)malloc(sizeof(latestLux));
     sem_wait(sem_i2c);
@@ -110,9 +112,9 @@ void *lumSensorHandler (void *arg) {
       if (terminateSignal) {
         enQueueForLog(WARN, "Termination signal received to Luminosity sensing thread.", 0);
         deQueueFromLog();
-        //Cleanup procedure for Luminosity Sensor thread
+        //Cleanup procedure for Luminosity sensing thread
         timer_delete(lumTimerid);
-        free (latestLux);
+        free(latestLux);
         break;
       }
       sleep(1);

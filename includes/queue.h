@@ -12,6 +12,7 @@
 #ifndef SRC_QUEUE_H_
 #define SRC_QUEUE_H_
 
+#include <mqueue.h>
 #include "log.h"
 
 /**
@@ -22,6 +23,8 @@ typedef struct {
   long mtype;
   LOG_t logQueue;
 }QUEUE_t;
+
+extern mqd_t mqdes;
 
 /**
  * @brief 
