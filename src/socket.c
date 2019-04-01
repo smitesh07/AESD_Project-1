@@ -56,9 +56,6 @@ void *externSocketHandler (void *arg) {
                 rxBuffer[n] = '\0';
                 printf("\nReceived: %s", rxBuffer);
 
-                /*
-                TODO: Depending on the command call the required APIs or return the last logging result
-                */ 
                 if (!strcmp(rxBuffer,"temp")) {
                     latestTemp= externReadTemp();
                     if (latestTemp->sensorConnected) {
