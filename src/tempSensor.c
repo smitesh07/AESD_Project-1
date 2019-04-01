@@ -121,6 +121,7 @@ void *tempSensorHandler (void *arg) {
 
     while (1) {
       //Call the function HERE to send the heartbeat signal to the message queue
+      
       sleep(1);
     }
 }

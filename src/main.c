@@ -28,7 +28,7 @@
 //Semaphore to synchronize access the I2C bus
 #define SEM_I2C "/sem_i2c"
 
-#define HEARTBEAT_TIMEOUT 5 //in seconds
+#define HEARTBEAT_TIMEOUT 2 //in seconds
 
 
 /**
@@ -42,6 +42,7 @@ void heartbeatTimerHandler () {
     return;
 }
 
+pthread_t logger, tempSensor, lumSensor, externSocket;
 
 /**
  * @brief Main
@@ -49,8 +50,6 @@ void heartbeatTimerHandler () {
  */
 int main(int argc, char *argv[])
 {
-    pthread_t logger, tempSensor, lumSensor, externSocket;
-
     char logFile[50];
     char fileName[50];
 
@@ -81,7 +80,7 @@ int main(int argc, char *argv[])
     pthread_create (&lumSensor, NULL, lumSensorHandler, NULL);  
     pthread_create (&externSocket, NULL, externSocketHandler, NULL);
 
-    initTimer(HEARTBEAT_TIMEOUT *1000000000, heartbeatTimerHandler);
+    initTimer(HEARTBEAT_TIMEOUT*1000000000, heartbeatTimerHandler);
 
 
     pthread_join(logger, NULL);

@@ -65,6 +65,7 @@ void lumSensorTrigger () {
 void *lumSensorHandler (void *arg) {
     int ret;
     latestLux = (luxUpdate *)malloc(sizeof(latestLux));
+    initTimer(LUMINOSITY_SENSING_INTERVAL*1000000000, lumSensorTrigger);
     sem_wait(sem_i2c);
     i2cCntrl(slaveAddr);
     if (initLumSensor()==-1) {
