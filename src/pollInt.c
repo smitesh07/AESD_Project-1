@@ -16,6 +16,7 @@
 #include <poll.h>
 #include "SimpleGPIO.h"
 #include "pollInt.h"
+#include "log.h"
 
 void pollInit(unsigned int gpio, poll_t *pollFds)
 {
@@ -27,6 +28,7 @@ void pollInit(unsigned int gpio, poll_t *pollFds)
     pollFds->f = open(buf, O_RDONLY);
     if (pollFds->f == -1) {
         perror("gpio/fd_open");
+        enQueueForLog(ERROR, "Failed gpio/fd_open", 0);
     }
     
     n = read(pollFds->f, &(pollFds->value), sizeof(pollFds->value));

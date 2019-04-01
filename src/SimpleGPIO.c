@@ -42,6 +42,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
+#include "log.h"
 
 /****************************************************************
  * gpio_export
@@ -54,6 +55,7 @@ int gpio_export(unsigned int gpio)
 	fd = open(SYSFS_GPIO_DIR "/export", O_WRONLY);
 	if (fd < 0) {
 		perror("gpio/export");
+		enQueueForLog(ERROR, "Failed gpio/export", 0);
 		return fd;
 	}
 
@@ -74,7 +76,8 @@ int gpio_unexport(unsigned int gpio)
 
 	fd = open(SYSFS_GPIO_DIR "/unexport", O_WRONLY);
 	if (fd < 0) {
-		perror("gpio/export");
+		perror("gpio/unexport");
+		enQueueForLog(ERROR, "Failed gpio/unexport", 0);
 		return fd;
 	}
 
@@ -97,6 +100,7 @@ int gpio_set_dir(unsigned int gpio, PIN_DIRECTION out_flag)
 	fd = open(buf, O_WRONLY);
 	if (fd < 0) {
 		perror("gpio/direction");
+		enQueueForLog(ERROR, "Failed gpio/direction", 0);
 		return fd;
 	}
 
@@ -122,6 +126,7 @@ int gpio_set_value(unsigned int gpio, PIN_VALUE value)
 	fd = open(buf, O_WRONLY);
 	if (fd < 0) {
 		perror("gpio/set-value");
+		enQueueForLog(ERROR, "Failed gpio/set-value", 0);
 		return fd;
 	}
 
@@ -148,6 +153,7 @@ int gpio_get_value(unsigned int gpio, unsigned int *value)
 	fd = open(buf, O_RDONLY);
 	if (fd < 0) {
 		perror("gpio/get-value");
+		enQueueForLog(ERROR, "Failed gpio/get-value", 0);
 		return fd;
 	}
 
@@ -178,6 +184,7 @@ int gpio_set_edge(unsigned int gpio, char *edge)
 	fd = open(buf, O_WRONLY);
 	if (fd < 0) {
 		perror("gpio/set-edge");
+		enQueueForLog(ERROR, "Failed gpio/set-edge", 0);
 		return fd;
 	}
 
@@ -200,6 +207,7 @@ int gpio_fd_open(unsigned int gpio)
 	fd = open(buf, O_RDONLY | O_NONBLOCK );
 	if (fd < 0) {
 		perror("gpio/fd_open");
+		enQueueForLog(ERROR, "Failed gpio/fd_open", 0);
 	}
 	return fd;
 }

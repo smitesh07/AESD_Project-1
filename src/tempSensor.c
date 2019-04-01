@@ -53,7 +53,7 @@ void tempSensorTrigger () {
       latestTemp->sensorConnected=false;
     } else {
       latestTemp->sensorConnected=true;
-      printf("Temperature Value in deg C: %f",tempData);
+      // printf("Temperature Value in deg C: %f",tempData);
       if(UNIT == CELSIUS)
         enQueueForLog(INFO, "Temperature Value in deg C: ",tempData);
       else if (UNIT == FAHRENHEIT)

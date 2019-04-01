@@ -20,6 +20,7 @@
 #include <fcntl.h>
 #include "tmp102.h"
 #include "i2c.h"
+#include "queue.h"
 
 uint8_t tempReg = 0x00;             // Temperature register from datasheet
 uint8_t configReg = 0x01;           // Config register from datasheet
@@ -33,7 +34,8 @@ uint16_t readTempReg(void) {
     // Using I2C Read
     if (i2cRead(buf,2) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to read from the i2c bus.\n");
+        // printf("Failed to read from the i2c bus.\n");
+        enQueueForLog(ERROR, "Failed to read from the i2c bus", 0);
         return -1;
     } else {
         // Bit 0 of second byte will always be 0 in 12-bit readings and 1 in 13-bit
@@ -69,7 +71,8 @@ float readTlow(void) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(&tlowReg, 1) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to write to the i2c bus");
+        // printf("Failed to write to the i2c bus");
+        enQueueForLog(ERROR, "Failed to write to the i2c bus", 0);
         return -1;
     }
 
@@ -81,7 +84,8 @@ float readThigh(void) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(&thighReg, 1) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to write to the i2c bus");
+        // printf("Failed to write to the i2c bus");
+        enQueueForLog(ERROR, "Failed to write to the i2c bus", 0);
         return -1;
     }
 
@@ -93,7 +97,8 @@ float readTemp(void) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(&tempReg, 1) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to write to the i2c bus");
+        // printf("Failed to write to the i2c bus");
+        enQueueForLog(ERROR, "Failed to write to the i2c bus", 0);
         return -1;
     }
 
@@ -108,14 +113,16 @@ uint16_t readConfigReg(void) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(&configReg, 1) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to write to the i2c bus");
+        // printf("Failed to write to the i2c bus");
+        enQueueForLog(ERROR, "Failed to write to the i2c bus", 0);
         return -1;
     }
 
     // Using I2C Read
     if (i2cRead(buf,2) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to read from the i2c bus.\n");
+        // printf("Failed to read from the i2c bus.\n");
+        enQueueForLog(ERROR, "Failed to read to the i2c bus", 0);
         return -1;
     } else {
         // Combine bytes to create a signed int 
@@ -186,13 +193,14 @@ int writeConfig(void) {
     buf[1] = configByte0;
     buf[2] = configByte1;
 
-    printf("Write config byte0 %x \n", buf[1]);
-    printf("Write config byte1 %x \n", buf[2]);
+    // printf("Write config byte0 %x \n", buf[1]);
+    // printf("Write config byte1 %x \n", buf[2]);
 
     // Using I2C Write to specify which register to read
     if (i2cWrite(buf, 3) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to write to the i2c bus");
+        // printf("Failed to write to the i2c bus");
+        enQueueForLog(ERROR, "Failed to write to the i2c bus", 0);
         return -1;
     }
 
@@ -203,6 +211,7 @@ int readConfig(void) {
     uint16_t configReg = readConfigReg();
     if (configReg == -1) {
         printf("Failed to read the i2c bus");
+        enQueueForLog(ERROR, "Failed to read the i2c bus", 0);
         return -1;
     }
     else {
@@ -262,7 +271,8 @@ int setTempReg(float tempData, uint8_t cmd) {
     // Using I2C Write to specify which register to read
     if (i2cWrite(buf, 3) != 0) {
         /* ERROR HANDLING: i2c transaction failed */
-        printf("Failed to write to the i2c bus");
+        // printf("Failed to write to the i2c bus");
+        enQueueForLog(ERROR, "Failed to write to the i2c bus", 0);
         return -1;
     }
     
@@ -272,6 +282,7 @@ int setTempReg(float tempData, uint8_t cmd) {
 int setLowTemp(void) {
     if(setTempReg(LOW_TEMP, tlowReg)!=0) {
         printf("Error setting low temp");
+        enQueueForLog(ERROR, "Error setting low temp", 0);
         return -1;
     }
 
@@ -281,6 +292,7 @@ int setLowTemp(void) {
 int setHighTemp(void) {
     if(setTempReg(HIGH_TEMP, thighReg)!=0) {
         printf("Error setting high temp");
+        enQueueForLog(ERROR, "Error setting high temp", 0);
         return -1;
     }
 

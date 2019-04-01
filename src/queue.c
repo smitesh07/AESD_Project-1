@@ -36,8 +36,10 @@ void initQueue(char *queueName) {
     
     // Open a queue with the attribute structure
     mqdes = mq_open (queueName, O_RDWR | O_CREAT, 0666, &attr);
-    if (mqdes <0)
+    if (mqdes <0) {
         perror("mq_open()");
+        enQueueForLog(ERROR, "Failed to open message queue", 0);
+    }
 }
 
 void enQueueForLog(LOG_LEVEL level, char *msg, float value) {
@@ -52,8 +54,10 @@ void enQueueForLog(LOG_LEVEL level, char *msg, float value) {
     (prioQueue->logQueue).value = value;
     prio = 0;
        
-    if (mq_send (mqdes, (const char *)prioQueue, sizeof(QUEUE_t), prio)< 0)
+    if (mq_send (mqdes, (const char *)prioQueue, sizeof(QUEUE_t), prio)< 0) {
         perror ("mq_send()");
+        enQueueForLog(ERROR, "Failed writing to message queue",0);
+    }
 
     free(prioQueue);   
 }

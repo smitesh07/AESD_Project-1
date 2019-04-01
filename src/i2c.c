@@ -9,6 +9,8 @@
  * 
  */
 #include "i2c.h"
+#include "log.h"
+#include "queue.h"
 
 static int file;
 
@@ -17,6 +19,7 @@ int i2cOpen(void){
     sprintf(fileName,"/dev/i2c-2");
     if ((file = open(fileName,O_RDWR)) < 0) {
         perror("Failed to open the bus.");
+        enQueueForLog(ERROR, "Failed to open the bus", 0);
         /* ERROR HANDLING; you can check errno to see what went wrong */
         return -1;
     }
@@ -27,6 +30,7 @@ int i2cOpen(void){
 int i2cCntrl(int addr) {
     if (ioctl(file,I2C_SLAVE,addr) < 0) {
         perror("Failed to acquire bus access and/or talk to slave.\n");
+        enQueueForLog(ERROR, "Failed to acquire bus access and/or talk to slave", 0);
         /* ERROR HANDLING; you can check errno to see what went wrong */
         return -1;
     }
@@ -39,6 +43,7 @@ int i2cRead(uint8_t *buf, unsigned int len) {
     if (read(file,buf,len) != len) {
         /* ERROR HANDLING: i2c transaction failed */
         perror("Failed to read from the i2c bus.\n");
+        enQueueForLog(ERROR, "Failed to read from the i2c bus", 0);
         return -1;
     }
 
@@ -49,6 +54,7 @@ int i2cWrite(uint8_t *buf, unsigned int len) {
     if (write(file,buf,len) != len) {
         /* ERROR HANDLING: i2c transaction failed */
         perror("Failed to write to the i2c bus.\n");
+        enQueueForLog(ERROR, "Failed to write to the i2c bus", 0);
         return -1;
     }
 
@@ -58,6 +64,7 @@ int i2cWrite(uint8_t *buf, unsigned int len) {
 int i2cClose(void) {
     if(close(file) < 0) {
         perror("Error closing i2c bus");
+        enQueueForLog(ERROR, "Error closing i2c bus", 0);
         return -1;
     }
     
