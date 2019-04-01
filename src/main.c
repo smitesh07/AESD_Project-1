@@ -26,6 +26,7 @@
 #include "lumSensor.h"
 #include "socket.h"
 #include "i2c.h"
+#include "SimpleGPIO.h"
 
 
 //Semaphore to synchronize access the I2C bus
@@ -54,6 +55,9 @@ void heartbeatTimerHandler () {
         tempHeartbeatFlag=false;
     else {
         enQueueForLog(ERROR, "Temperature sensing thread is DEAD!! Issuing pthread_cancel().. ", 0);
+        gpio_set_value(ERROR_LED, 1);
+        usleep(500);
+        gpio_set_value(ERROR_LED, 1);
         pthread_cancel(&tempSensor);
     }
 
@@ -61,6 +65,9 @@ void heartbeatTimerHandler () {
         lumHeartbeatFlag=false;
     else {
         enQueueForLog(ERROR, "Luminosity sensing thread is DEAD!! Issuing pthread_cancel().. ", 0);
+        gpio_set_value(ERROR_LED, 1);
+        usleep(500);
+        gpio_set_value(ERROR_LED, 1);
         pthread_cancel(&lumSensor);
     }
 
@@ -70,6 +77,9 @@ void heartbeatTimerHandler () {
         enQueueForLog(ERROR, "Logger thread is DEAD!! Issuing pthread_cancel().. ", 0);
         deQueueFromLog();
         fflush(filePtr);
+        gpio_set_value(ERROR_LED, 1);
+        usleep(500);
+        gpio_set_value(ERROR_LED, 1);
         pthread_cancel(&logger);
     }
 
@@ -138,6 +148,9 @@ int main(int argc, char *argv[])
 	sa.sa_handler=&sigHandler;
 	sa.sa_flags=0;
 	sigaction(SIGINT, &sa, NULL);
+
+    gpio_export(ERROR_LED);
+    gpio_set_dir(ERROR_LED, OUTPUT_PIN);
 
     pthread_create (&logger, NULL, loggerHandler, NULL);
     pthread_create (&tempSensor, NULL, tempSensorHandler, NULL);

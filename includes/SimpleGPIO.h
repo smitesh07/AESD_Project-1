@@ -46,6 +46,7 @@
 #define MAX_BUF 64
 #define USR_LED0 53
 #define USR_LED1 54
+#define ERROR_LED 55
 
 typedef enum {
 	INPUT_PIN=0,
