@@ -42,6 +42,7 @@ void heartbeatTimerHandler () {
     return;
 }
 
+pthread_t logger, tempSensor, lumSensor, externSocket;
 
 /**
  * @brief Main
@@ -49,8 +50,6 @@ void heartbeatTimerHandler () {
  */
 int main(int argc, char *argv[])
 {
-    pthread_t logger, tempSensor, lumSensor, externSocket;
-
     char logFile[50];
     char fileName[50];
 
