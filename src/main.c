@@ -48,16 +48,11 @@ timer_t mainTimerid;
  *
  */
 void heartbeatTimerHandler () {
-    printf("\nMain thread heartbeat timeout\n");
-    fflush(stdout);
 
     if (tempHeartbeatFlag)
         tempHeartbeatFlag=false;
     else {
         enQueueForLog(ERROR, "Temperature sensing thread is DEAD!! Issuing pthread_cancel().. ", 0);
-        gpio_set_value(ERROR_LED, 1);
-        usleep(500);
-        gpio_set_value(ERROR_LED, 1);
         pthread_cancel(&tempSensor);
     }
 
@@ -65,9 +60,6 @@ void heartbeatTimerHandler () {
         lumHeartbeatFlag=false;
     else {
         enQueueForLog(ERROR, "Luminosity sensing thread is DEAD!! Issuing pthread_cancel().. ", 0);
-        gpio_set_value(ERROR_LED, 1);
-        usleep(500);
-        gpio_set_value(ERROR_LED, 1);
         pthread_cancel(&lumSensor);
     }
 
@@ -77,9 +69,6 @@ void heartbeatTimerHandler () {
         enQueueForLog(ERROR, "Logger thread is DEAD!! Issuing pthread_cancel().. ", 0);
         deQueueFromLog();
         fflush(filePtr);
-        gpio_set_value(ERROR_LED, 1);
-        usleep(500);
-        gpio_set_value(ERROR_LED, 1);
         pthread_cancel(&logger);
     }
 
@@ -131,9 +120,6 @@ int main(int argc, char *argv[])
     char path[] = "/OpenTest_MQ";
     logInit(logFile);
     initQueue(path);
-
-    printf("\nMain spawned");
-    fflush(stdout);
 
     //Create and Initialize the semaphore for I2C bus syncronization
     sem_i2c = sem_open(SEM_I2C, O_RDWR | O_CREAT, 0666, 1);

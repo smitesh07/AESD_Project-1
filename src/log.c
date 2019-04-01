@@ -44,8 +44,6 @@ void logFlush(void) {
 
 
 void *loggerHandler(void *arg) {
-    printf("\nLogger thread spawned");
-    fflush(stdout);
     while (1) {
       deQueueFromLog();
       fflush(filePtr);

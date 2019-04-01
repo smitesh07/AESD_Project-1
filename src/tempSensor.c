@@ -51,6 +51,9 @@ void tempSensorTrigger () {
 
     if (tempData == -1) {
       latestTemp->sensorConnected=false;
+      gpio_set_value(USR_LED0, 1);
+      usleep(500000);
+      gpio_set_value(USR_LED0, 0);
     } else {
       latestTemp->sensorConnected=true;
       // printf("Temperature Value in deg C: %f",tempData);
@@ -86,6 +89,15 @@ void *tempSensorHandler (void *arg) {
     //Acquire the semaphore
     sem_wait(sem_i2c);
     i2cCntrl(TEMP_SENSOR_ADDR);
+    if (selfTest()==-1) {
+      latestTemp->sensorConnected=false;
+      enQueueForLog(ERROR, "Temperature Sensor Thread terminating.. Startup Test failed!! ", 0);
+      //The latest Temp structure is retained in memory to cater to the Remote Socket Requests
+      pthread_exit();
+    }
+    else {
+      LOG_INFO("Temperature Sensor Startup test successful");
+    }
     ret = writeConfig();
     setHighTemp();
     setLowTemp();

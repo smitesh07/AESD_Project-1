@@ -305,7 +305,7 @@ int selfTest(void) {
     uint8_t configByte0 = (configData & 0xFF00) >> 8;
     uint8_t configByte1 = (configData & 0x00FF);
 
-    if (configByte0 == 0x60 && configByte0 == 0xA0)
+    if (configByte0 == 0x60 && configByte1 == 0xA0)
         return 0;
     else
         return -1;

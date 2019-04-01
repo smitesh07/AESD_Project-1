@@ -38,6 +38,9 @@ void lumSensorTrigger () {
     if (lux<0) {
       latestLux->sensorConnected=false;
       enQueueForLog(ERROR, "Luminosity Sensor Disconnected!! Will retry in a few seconds..", 0);
+      gpio_set_value(USR_LED1, 1);
+      usleep(500000);
+      gpio_set_value(USR_LED1, 0);
     }
     else {
       latestLux->sensorConnected=true;
@@ -79,7 +82,6 @@ void *lumSensorHandler (void *arg) {
     }
     else {
       latestLux->sensorConnected=true;
-      enQueueForLog(DEBUG, "Luminosity Sensor Startup Tests successful! ", 0);
     }
     sem_post(sem_i2c);
 

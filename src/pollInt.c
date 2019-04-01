@@ -33,7 +33,7 @@ void pollInit(unsigned int gpio, poll_t *pollFds)
     
     n = read(pollFds->f, &(pollFds->value), sizeof(pollFds->value));
     if (n > 0) {
-        printf("Initial value=%c\n", pollFds->value[0]);
+        // printf("Initial value=%c\n", pollFds->value[0]);
         lseek(pollFds->f, 0, SEEK_SET);
     }
 

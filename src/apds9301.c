@@ -126,6 +126,8 @@ int initLumSensor() {
     }    
     LOG_INFO("Interrupt Control Reg (Level Interrupts enabled): 0x%x",readBuffer[0]);
 
+    LOG_INFO("Luminosity Sensor Startup Tests successful! ");
+
     return 0;
 }
 
