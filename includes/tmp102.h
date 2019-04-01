@@ -34,9 +34,9 @@
 
 #define POL 1           // define polarity, refer datasheet
 
-#define LOW_TEMP  50.00f    // define low temp in degree Celsius
+#define LOW_TEMP  30.00f    // define low temp in degree Celsius
 
-#define HIGH_TEMP 0.00f     // define high temp in degree Celsius
+#define HIGH_TEMP 27.00f     // define high temp in degree Celsius
 
 #define FAULTS FAULTS_ONE   // Consecutive faults based on enums defined below
 

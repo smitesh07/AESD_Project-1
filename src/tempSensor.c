@@ -36,9 +36,6 @@ void tempSensorTrigger () {
 
     tempData = readTemp();
 
-    // Release Mutex
-    sem_post(sem_i2c);
-
     if(UNIT == CELSIUS)
       tempData = tempData;
     else if (UNIT == FAHRENHEIT)
@@ -59,6 +56,7 @@ void tempSensorTrigger () {
         enQueueForLog(INFO, "Temperature Value in kelvin: ",tempData);
     }
 
+    printf("Waiting");
     ret = poll(pollFds.poll_fds, 1, POLL_TIMEOUT);
     if (ret > 0) {
         // n = read(pollFds.f, &(pollFds.value), sizeof(pollFds.value));
@@ -68,6 +66,9 @@ void tempSensorTrigger () {
         enQueueForLog(INFO, "Temperature Sensor Interrupt Received",0);
         lseek(pollFds.f, 0, SEEK_SET);
     }
+    
+    // Release Mutex
+    sem_post(sem_i2c);
 
     return;
 }
@@ -83,8 +84,8 @@ void *tempSensorHandler (void *arg) {
     sem_wait(sem_i2c);
     i2cCntrl(TEMP_SENSOR_ADDR);
     ret = writeConfig();
-    // Release Mutex
-    sem_post(sem_i2c);
+    setHighTemp();
+    setLowTemp();
 
     if (ret != 0) {
       enQueueForLog(ERROR, "Could not configure temperature sensor",0);
@@ -92,6 +93,9 @@ void *tempSensorHandler (void *arg) {
     } else {
       latestTemp->sensorConnected=true;
     }
+
+    gpio_export(53);
+    gpio_set_dir(53, OUTPUT_PIN);
 
     // Setup pin 7 for interrupt
     ret = gpio_export(TEMP_ALERT_PIN);
@@ -104,13 +108,16 @@ void *tempSensorHandler (void *arg) {
       enQueueForLog(ERROR, "Unable to set direction for Temperature Alert pin", 0);
     }
 
-    ret = gpio_set_edge(7, "rising");
+    ret = gpio_set_edge(TEMP_ALERT_PIN, "rising");
     if (ret != 0) {
       enQueueForLog(ERROR, "Unable to set edge for Temperature Alert pin", 0);
     }
 
     // Initialize polling for interrupt
     pollInit(7, &pollFds);
+
+    // Release Mutex
+    sem_post(sem_i2c);
 
     while (1) {
       //Call the function HERE to send the heartbeat signal to the message queue
