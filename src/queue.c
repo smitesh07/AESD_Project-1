@@ -51,7 +51,7 @@ void enQueueForLog(LOG_LEVEL level, char *msg, float value) {
     (prioQueue->logQueue).level = level;
     strcpy((prioQueue->logQueue).msg, msg);
     (prioQueue->logQueue).value = value;
-    prio = level;
+    prio = 0;
        
     if (mq_send (mqdes, (const char *)prioQueue, sizeof(QUEUE_t), prio)< 0)
         perror ("mq_send()");
@@ -86,30 +86,9 @@ void deQueueFromLog(void) {
         }                
         
         fflush(filePtr);
-        // The call failed.  Make sure errno is EAGAIN
-        // if (errno != EAGAIN) 
-        // { 
-        //     perror ("mq_receive()");
-        // _exit (EXIT_FAILURE);
-        // }
         
         free(prioQueue);
         
         // Now restore the attributes
         mq_setattr (mqdes, &old_attr, 0);
-
-        // mq_close (mqdes);         
-    // }
-    // if (logQueue->level == ERROR)
-    //     {
-    //     LOG_ERROR("Error writing successful");
-    //     }
-    // else if (logQueue->level == INFO)
-    //     {
-    //     LOG_INFO("Info writing successful %d",logQueue->value);
-    //     }
-    // else if (logQueue->level == WARN)
-    //     {
-    //     LOG_WARN("Warn writing successful");
-    //     }
 }

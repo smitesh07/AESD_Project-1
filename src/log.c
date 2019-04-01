@@ -34,18 +34,6 @@ void logInit(char *logFile) {
     char fileName[10];
     strcpy(fileName, logFile);
     filePtr = fopen((char *)fileName,"w");
-    // LOG_t queue;
-    // queue.level = ERROR;
-    // queue.msg = "ERROR test";
-    // deQueueFromLog(&queue);
-    // queue.level = INFO;
-    // queue.msg = "ERROR test";
-    // queue.value = 11;
-    // deQueueFromLog(&queue);
-    // queue.level = WARN;
-    // queue.msg = "ERROR test";
-    // deQueueFromLog(&queue);
-
 }
 
 void logFlush(void) { 

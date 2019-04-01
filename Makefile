@@ -15,7 +15,7 @@ ifeq ($(PLATFORM),BBG)
 	CC = arm-linux-gcc
 endif
 
-TARGET = test
+TARGET = project1
 
 OBJS = $(SRCS:.c=.o)
 

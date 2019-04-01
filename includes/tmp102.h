@@ -32,9 +32,9 @@
 #define ALERT_MODE 1    // 1: Interrupt Mode on, Comparator Mode off
                         // 0: Interrupt Mode off, Comparator Mode on (default)
 
-#define POL 0           // define polarity, refer datasheet
+#define POL 1           // define polarity, refer datasheet
 
-#define LOW_TEMP  27.00f    // define low temp in degree Celsius
+#define LOW_TEMP  28.00f    // define low temp in degree Celsius
 
 #define HIGH_TEMP 30.00f     // define high temp in degree Celsius
 
@@ -120,5 +120,11 @@ int setLowTemp(void);
  */
 int setHighTemp(void);
 
+/**
+ * @brief self test sensor by reading out default config register value 
+ * 
+ * @return int 
+ */
+int selfTest(void);
 
 #endif /* SRC_TMP102_H_ */

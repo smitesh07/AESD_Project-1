@@ -42,7 +42,7 @@
  ****************************************************************/
 
 #define SYSFS_GPIO_DIR "/sys/class/gpio"
-#define POLL_TIMEOUT (2 * 1000) /* 3 seconds */
+#define POLL_TIMEOUT (2 * 1000) /* 2 seconds */
 #define MAX_BUF 64
 #define USR_LED0 53
 #define USR_LED1 54
