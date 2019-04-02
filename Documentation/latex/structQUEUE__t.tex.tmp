@@ -1,0 +1,36 @@
+\hypertarget{structQUEUE__t}{}\section{Q\+U\+E\+U\+E\+\_\+t Struct Reference}
+\label{structQUEUE__t}\index{Q\+U\+E\+U\+E\+\_\+t@{Q\+U\+E\+U\+E\+\_\+t}}
+
+
+message queue structure  
+
+
+
+
+{\ttfamily \#include $<$queue.\+h$>$}
+
+
+
+Collaboration diagram for Q\+U\+E\+U\+E\+\_\+t\+:
+% FIG 0
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structQUEUE__t_a913e40e09a477126277aea0e541be3a1}\label{structQUEUE__t_a913e40e09a477126277aea0e541be3a1}} 
+long {\bfseries mtype}
+\item 
+\mbox{\Hypertarget{structQUEUE__t_ab3414e47c2849b954fc9cd50077e3cad}\label{structQUEUE__t_ab3414e47c2849b954fc9cd50077e3cad}} 
+\hyperlink{structLOG__t}{L\+O\+G\+\_\+t} {\bfseries log\+Queue}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+message queue structure 
+
+Definition at line 22 of file queue.\+h.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+includes/queue.\+h\end{DoxyCompactItemize}
