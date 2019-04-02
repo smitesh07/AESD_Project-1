@@ -94,6 +94,7 @@ int writeConfig(void);
 /**
  * @brief read config register by calling read config reg and print out necessary data
  * 
+ * @return int returns 0 on success else -1
  */
 int readConfig(void);
 
@@ -110,6 +111,7 @@ int setTempReg(float tempData, uint8_t cmd);
  * @brief Set low limit register by providing setTempReg function with
  *        temperature value and register address
  * 
+ * @return int returns 0 on success else -1
  */
 int setLowTemp(void);
 
@@ -117,13 +119,14 @@ int setLowTemp(void);
  * @brief Set high limit register by providing setTempReg function with
  *        temperature value and register address
  * 
+ * @return int returns 0 on success else -1
  */
 int setHighTemp(void);
 
 /**
  * @brief self test sensor by reading out default config register value 
  * 
- * @return int 
+ * @return int returns 0 on success else -1
  */
 int selfTest(void);
 
