@@ -2,4 +2,4 @@
 
 A “smart” environment monitoring device using the BeagleBone Green development board along with two offboard sensors viz. Light sensor and Temperature sensor
 
-Documentation[index.html] 
+[Documentation](https://raw.githack.com/smitesh07/AESD_Project-1/master/index.html)
