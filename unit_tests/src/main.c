@@ -42,6 +42,11 @@ int main () {
         printf("Zero temperature test passed \n");
     }
 
+    data = readTemp();
+    if (data == -25) {
+        printf("Negative temperature test passed \n");
+    }
+
     char filename[] = "Test.txt";
     logInit(filename);
     LOG_INFO("Testing Log file %d \n", 100);

@@ -27,7 +27,7 @@ uint8_t configReg = 0x01;           // Config register from datasheet
 uint8_t tlowReg = 0x02;             // Temperature Low register from datasheet
 uint8_t thighReg= 0x03;             // Temperature High register from datasheet
 
-uint16_t readTempReg(void) {
+int16_t readTempReg(void) {
     uint8_t buf[2] = {0};
     int16_t data;
 

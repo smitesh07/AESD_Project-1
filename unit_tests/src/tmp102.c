@@ -28,8 +28,9 @@ uint8_t thighReg= 0x03;             // Temperature High register from datasheet
 
 uint16_t mocktemp0 = 0x500;
 uint16_t mocktemp1 = 0x0;
+uint16_t mocktemp2 = 0xE70;
 
-uint16_t readTempReg(void) {
+int16_t readTempReg(void) {
 
     uint8_t buf[2] = {0};
     int16_t data;
@@ -42,6 +43,9 @@ uint16_t readTempReg(void) {
             buf[1] = 0x00;
         } else if (count == 1) {
             buf[0] = 0x00;
+            buf[1] = 0x00;
+        } else if (count == 2) {
+            buf[0] = 0xE7;
             buf[1] = 0x00;
         } 
         // Combine bytes to create a signed int 

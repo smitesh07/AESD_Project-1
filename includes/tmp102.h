@@ -59,9 +59,9 @@ typedef enum{
 /**
  * @brief Read temperature register
  * 
- * @return uint16_t return temperature data in binary form
+ * @return int16_t return temperature data in binary form
  */
-uint16_t readTempReg(void);
+int16_t readTempReg(void);
 
 /**
  * @brief Read low limit temperature register
